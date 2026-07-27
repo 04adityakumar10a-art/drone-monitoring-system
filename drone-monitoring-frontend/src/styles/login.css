@@ -1,0 +1,234 @@
+/* ===========================
+   DMS LOGIN PAGE
+=========================== */
+
+.login-background {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: backgroundZoom 20s ease-in-out infinite alternate;
+}
+
+.login-card {
+    animation: fadeUp 0.9s ease;
+}
+
+/* ===========================
+   Background Zoom
+=========================== */
+
+@keyframes backgroundZoom {
+
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.08);
+    }
+
+}
+
+/* ===========================
+   Fade Animation
+=========================== */
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(40px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+/* ===========================
+   Radar Rings
+=========================== */
+
+.radar {
+
+    width: 380px;
+
+    height: 380px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(34, 211, 238, 0.15);
+
+    position: absolute;
+
+    animation: radarPulse 6s linear infinite;
+
+}
+
+.radar:nth-child(2) {
+
+    animation-delay: 2s;
+
+}
+
+.radar:nth-child(3) {
+
+    animation-delay: 4s;
+
+}
+
+@keyframes radarPulse {
+
+    0% {
+
+        transform: scale(0.7);
+
+        opacity: 0.6;
+
+    }
+
+    100% {
+
+        transform: scale(1.7);
+
+        opacity: 0;
+
+    }
+
+}
+
+/* ===========================
+   Logo
+=========================== */
+
+.login-card img {
+
+    transition: 0.4s ease;
+
+    user-select: none;
+
+}
+
+.login-card img:hover {
+
+    transform: scale(1.08);
+
+    filter: drop-shadow(0 0 20px rgba(6, 182, 212, .8));
+
+}
+
+/* ===========================
+   Inputs
+=========================== */
+
+.login-card input {
+
+    transition: .3s ease;
+
+}
+
+.login-card input:focus {
+
+    box-shadow: 0 0 20px rgba(6,182,212,.25);
+
+}
+
+/* ===========================
+   Button
+=========================== */
+
+.login-card button {
+
+    transition: .35s ease;
+
+}
+
+.login-card button:hover:not(:disabled) {
+
+    transform: translateY(-3px);
+
+}
+
+.login-card button:active:not(:disabled) {
+
+    transform: translateY(0);
+
+}
+
+/* ===========================
+   Enterprise Badge
+=========================== */
+
+.login-card span {
+
+    transition: .3s ease;
+
+}
+
+.login-card span:hover {
+
+    color: #67e8f9;
+
+}
+
+/* ===========================
+   Scrollbar
+=========================== */
+
+::-webkit-scrollbar {
+
+    width: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: #020617;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: #0891b2;
+
+    border-radius: 999px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #06b6d4;
+
+}
+
+.login-card{
+
+    box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 20px 80px rgba(0,0,0,.7),
+    0 0 60px rgba(6,182,212,.08);
+
+}
+
+.login-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.login-card h1{
+
+    text-shadow:
+    0 0 10px #06b6d4,
+    0 0 30px #06b6d4,
+    0 0 50px #06b6d4;
+
+}
