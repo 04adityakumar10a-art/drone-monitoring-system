@@ -25,10 +25,11 @@ protected void doFilterInternal(
         jakarta.servlet.FilterChain filterChain)
         throws java.io.IOException, jakarta.servlet.ServletException {
 
-    // Skip JWT validation for authentication endpoints
     String path = request.getServletPath();
 
-    if (path.startsWith("/api/auth")) {
+    // Skip JWT validation for public endpoints
+    if (path.startsWith("/api/auth")
+            || path.startsWith("/ws")) {
 
         filterChain.doFilter(request, response);
 
@@ -52,33 +53,32 @@ protected void doFilterInternal(
 
         String username = jwtService.extractUsername(jwt);
 
-        UserDetails userDetails =
-                userDetailsService.loadUserByUsername(username);
+        if (username != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        if (!jwtService.isTokenValid(jwt)) {
+            UserDetails userDetails =
+                    userDetailsService.loadUserByUsername(username);
 
-            filterChain.doFilter(request, response);
+            if (jwtService.isTokenValid(jwt)) {
 
-            return;
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
+
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
+
+            }
 
         }
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource()
-                        .buildDetails(request));
-
-        SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
-
-    }
-
-    catch (Exception ex) {
+    } catch (Exception ex) {
 
         System.out.println("JWT Validation Failed : " + ex.getMessage());
 

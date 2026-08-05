@@ -90,6 +90,16 @@ public class TelemetryResponseDTO {
         this.timestamp = timestamp;
     }
 
+    private String droneModel;
+
+    public String getDroneModel() {
+        return droneModel;
+    }
+
+    public void setDroneModel(String droneModel) {
+        this.droneModel = droneModel;
+    }
+
     private Double longitude;
 
     private Double altitude;

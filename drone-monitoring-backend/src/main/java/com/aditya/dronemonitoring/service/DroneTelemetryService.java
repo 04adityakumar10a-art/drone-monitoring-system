@@ -1,5 +1,6 @@
 package com.aditya.dronemonitoring.service;
 
+import com.aditya.dronemonitoring.dto.DroneStatusDTO;
 import com.aditya.dronemonitoring.dto.TelemetryRequestDTO;
 import com.aditya.dronemonitoring.dto.TelemetryResponseDTO;
 import com.aditya.dronemonitoring.entity.Drone;
@@ -9,6 +10,7 @@ import com.aditya.dronemonitoring.exception.DroneNotFoundException;
 import com.aditya.dronemonitoring.repository.DroneRepository;
 import com.aditya.dronemonitoring.repository.DroneTelemetryRepository;
 import com.aditya.dronemonitoring.util.DroneTelemetryMapper;
+import com.aditya.dronemonitoring.websocket.DronePublisher;
 import com.aditya.dronemonitoring.websocket.TelemetryPublisher;
 
 import org.slf4j.Logger;
@@ -29,16 +31,18 @@ public class DroneTelemetryService {
         private static final Logger logger = LoggerFactory.getLogger(DroneTelemetryService.class);
         private final TelemetryPublisher telemetryPublisher;
         private final DroneRepository droneRepository;
-
+        private final DronePublisher dronePublisher;
         private final DroneTelemetryRepository telemetryRepository;
 
         public DroneTelemetryService(
-        DroneTelemetryRepository telemetryRepository,
-        DroneRepository droneRepository,
-        TelemetryPublisher telemetryPublisher) {
+                        DroneTelemetryRepository telemetryRepository,
+                        DroneRepository droneRepository,
+                        DronePublisher dronePublisher,
+                        TelemetryPublisher telemetryPublisher) {
 
                 this.droneRepository = droneRepository;
                 this.telemetryRepository = telemetryRepository;
+                this.dronePublisher = dronePublisher;
                 this.telemetryPublisher = telemetryPublisher;
         }
 
@@ -71,12 +75,29 @@ public class DroneTelemetryService {
                 drone.setStatus(determineStatus(request.getBatteryLevel()));
 
                 droneRepository.save(drone);
+                DroneStatusDTO dto = new DroneStatusDTO();
 
+                dto.setId(drone.getId());
+
+                dto.setStatus(drone.getStatus().name());
+
+                dto.setBatteryLevel(drone.getBatteryLevel());
+
+                dto.setLatitude(drone.getLatitude());
+
+                dto.setLongitude(drone.getLongitude());
+
+                dto.setAltitude(drone.getAltitude());
+
+                dronePublisher.publish(dto);
                 logger.info(
                                 "Telemetry stored successfully for drone {}",
                                 drone.getId());
 
                 TelemetryResponseDTO response = DroneTelemetryMapper.toResponse(savedTelemetry);
+
+                // Add drone model for frontend display
+                response.setDroneModel(drone.getModel());
 
                 telemetryPublisher.publish(response);
 

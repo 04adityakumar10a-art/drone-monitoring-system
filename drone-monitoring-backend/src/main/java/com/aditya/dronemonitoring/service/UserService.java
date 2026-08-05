@@ -1,112 +1,206 @@
 package com.aditya.dronemonitoring.service;
 
+import com.aditya.dronemonitoring.dto.CreateUserRequestDTO;
 import com.aditya.dronemonitoring.dto.RegisterRequestDTO;
 import com.aditya.dronemonitoring.dto.RegisterResponseDTO;
-import com.aditya.dronemonitoring.entity.Role;
+import com.aditya.dronemonitoring.dto.UpdateRoleRequestDTO;
+import com.aditya.dronemonitoring.dto.UserResponseDTO;
 import com.aditya.dronemonitoring.entity.User;
 import com.aditya.dronemonitoring.exception.EmailAlreadyExistsException;
+import com.aditya.dronemonitoring.exception.UserNotFoundException;
 import com.aditya.dronemonitoring.exception.UsernameAlreadyExistsException;
 import com.aditya.dronemonitoring.repository.UserRepository;
 import com.aditya.dronemonitoring.util.UserMapper;
-import java.util.List;
-
-import com.aditya.dronemonitoring.dto.UpdateRoleRequestDTO;
-import com.aditya.dronemonitoring.dto.UserResponseDTO;
-import com.aditya.dronemonitoring.exception.UserNotFoundException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+        private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository,
-            BCryptPasswordEncoder passwordEncoder) {
+        private final BCryptPasswordEncoder passwordEncoder;
 
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+        public UserService(
+                        UserRepository userRepository,
+                        BCryptPasswordEncoder passwordEncoder) {
 
-    public RegisterResponseDTO registerUser(RegisterRequestDTO request) {
+                this.userRepository = userRepository;
+                this.passwordEncoder = passwordEncoder;
 
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new UsernameAlreadyExistsException(
-                    "Username already exists");
         }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyExistsException(
-                    "Email already exists");
+        /*
+         * =====================================
+         * PUBLIC REGISTER (VIEWER)
+         * =====================================
+         */
+
+        public RegisterResponseDTO registerUser(RegisterRequestDTO request) {
+
+                if (userRepository.existsByUsername(request.getUsername())) {
+
+                        throw new UsernameAlreadyExistsException(
+                                        "Username already exists");
+
+                }
+
+                if (userRepository.existsByEmail(request.getEmail())) {
+
+                        throw new EmailAlreadyExistsException(
+                                        "Email already exists");
+
+                }
+
+                User user = UserMapper.toEntity(request);
+
+                user.setPassword(
+
+                                passwordEncoder.encode(request.getPassword())
+
+                );
+
+                user.setRole(com.aditya.dronemonitoring.entity.Role.VIEWER);
+
+                User savedUser = userRepository.save(user);
+
+                return UserMapper.toResponse(savedUser);
+
         }
 
-        User user = UserMapper.toEntity(request);
+        /*
+         * =====================================
+         * ADMIN CREATE USER
+         * =====================================
+         */
 
-        user.setPassword(
-                passwordEncoder.encode(request.getPassword()));
+        public UserResponseDTO createUser(CreateUserRequestDTO request) {
 
-        user.setRole(Role.VIEWER);
+                if (userRepository.existsByUsername(request.getUsername())) {
 
-        User savedUser = userRepository.save(user);
+                        throw new UsernameAlreadyExistsException(
+                                        "Username already exists");
 
-        return UserMapper.toResponse(savedUser);
-    }
+                }
 
-    public List<UserResponseDTO> getAllUsers() {
+                if (userRepository.existsByEmail(request.getEmail())) {
 
-        return userRepository.findAll()
+                        throw new EmailAlreadyExistsException(
+                                        "Email already exists");
 
-                .stream()
+                }
 
-                .map(user -> new UserResponseDTO(
+                User user = new User();
 
-                        user.getId(),
+                user.setUsername(request.getUsername());
 
-                        user.getUsername(),
+                user.setEmail(request.getEmail());
 
-                        user.getEmail(),
+                user.setPassword(
 
-                        user.getRole(),
+                                passwordEncoder.encode(request.getPassword())
 
-                        user.getEnabled(),
+                );
 
-                        user.getCreatedAt()
+                user.setRole(request.getRole());
 
-                ))
+                user.setEnabled(true);
 
-                .toList();
+                User savedUser = userRepository.save(user);
 
-    }
+                return new UserResponseDTO(
 
-    public UserResponseDTO updateRole(
-            Long id,
-            UpdateRoleRequestDTO request) {
+                                savedUser.getId(),
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                                savedUser.getUsername(),
 
-        System.out.println("Requested role: " + request.getRole());
-        user.setRole(request.getRole());
+                                savedUser.getEmail(),
 
-        User savedUser = userRepository.save(user);
+                                savedUser.getRole(),
 
-        return new UserResponseDTO(
+                                savedUser.getEnabled(),
 
-                savedUser.getId(),
+                                savedUser.getCreatedAt()
 
-                savedUser.getUsername(),
+                );
 
-                savedUser.getEmail(),
+        }
 
-                savedUser.getRole(),
+        /*
+         * =====================================
+         * GET ALL USERS
+         * =====================================
+         */
 
-                savedUser.getEnabled(),
+        public List<UserResponseDTO> getAllUsers() {
 
-                savedUser.getCreatedAt()
+                return userRepository.findAll()
 
-        );
+                                .stream()
 
-    }
+                                .map(user -> new UserResponseDTO(
+
+                                                user.getId(),
+
+                                                user.getUsername(),
+
+                                                user.getEmail(),
+
+                                                user.getRole(),
+
+                                                user.getEnabled(),
+
+                                                user.getCreatedAt()
+
+                                ))
+
+                                .toList();
+
+        }
+
+        /*
+         * =====================================
+         * UPDATE ROLE
+         * =====================================
+         */
+
+        public UserResponseDTO updateRole(
+
+                        Long id,
+
+                        UpdateRoleRequestDTO request
+
+        ) {
+
+                User user = userRepository.findById(id)
+
+                                .orElseThrow(() ->
+
+                                new UserNotFoundException("User not found"));
+
+                user.setRole(request.getRole());
+
+                User savedUser = userRepository.save(user);
+
+                return new UserResponseDTO(
+
+                                savedUser.getId(),
+
+                                savedUser.getUsername(),
+
+                                savedUser.getEmail(),
+
+                                savedUser.getRole(),
+
+                                savedUser.getEnabled(),
+
+                                savedUser.getCreatedAt()
+
+                );
+
+        }
+
 }
