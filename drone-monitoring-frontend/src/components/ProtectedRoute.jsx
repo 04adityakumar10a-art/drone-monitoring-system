@@ -1,32 +1,26 @@
 import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function ProtectedRoute({ children }) {
 
-    const token = localStorage.getItem("token");
+    const { isAuthenticated } = useAuth();
 
     const role = localStorage.getItem("role");
 
     const location = useLocation();
 
-    // Not logged in
-    if (!token) {
-
+    if (!isAuthenticated) {
         return <Navigate to="/" replace />;
-
     }
 
-    // Only ADMIN can access /users
     if (
         location.pathname === "/users" &&
         role !== "ADMIN"
     ) {
-
         return <Navigate to="/dashboard" replace />;
-
     }
 
     return children;
-
 }
 
 export default ProtectedRoute;

@@ -1,12 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
+import Register from "../pages/Register";
+
 import Dashboard from "../pages/Dashboard";
 import DroneList from "../pages/DroneList";
+import DroneDetails from "../pages/DroneDetails";
 import Users from "../pages/Users";
+
+import MissionControl from "../pages/MissionControl/MissionControl";
+import Analytics from "../pages/Analytics/Analytics";
+import Reports from "../pages/Reports/Reports";
+
 import NotFound from "../pages/NotFound";
 
 import ProtectedRoute from "../components/ProtectedRoute";
+
+import DashboardLayout from "../layouts/DashboardLayout";
 
 function AppRoutes() {
 
@@ -16,37 +26,75 @@ function AppRoutes() {
 
             <Routes>
 
+                {/* PUBLIC */}
+
                 <Route
                     path="/"
                     element={<Login />}
                 />
 
                 <Route
-                    path="/dashboard"
+                    path="/login"
+                    element={<Login />}
+                />
+
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
+
+                {/* MISSION CONTROL */}
+
+                <Route
+                    path="/mission-control"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <MissionControl />
                         </ProtectedRoute>
                     }
                 />
 
-                <Route
-                    path="/drones"
-                    element={
-                        <ProtectedRoute>
-                            <DroneList />
-                        </ProtectedRoute>
-                    }
-                />
+                {/* DASHBOARD */}
 
                 <Route
-                    path="/users"
                     element={
                         <ProtectedRoute>
-                            <Users />
+                            <DashboardLayout />
                         </ProtectedRoute>
                     }
-                />
+                >
+
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
+
+                    <Route
+                        path="/drones"
+                        element={<DroneList />}
+                    />
+
+                    <Route
+                        path="/drones/:id"
+                        element={<DroneDetails />}
+                    />
+
+                    <Route
+                        path="/analytics"
+                        element={<Analytics />}
+                    />
+
+                    <Route
+                        path="/reports"
+                        element={<Reports />}
+                    />
+
+                    <Route
+                        path="/users"
+                        element={<Users />}
+                    />
+
+                </Route>
 
                 <Route
                     path="*"

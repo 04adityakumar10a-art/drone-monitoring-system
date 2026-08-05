@@ -1,3 +1,17 @@
+import {
+    PencilSquareIcon,
+    TrashIcon,
+    EyeIcon
+} from "@heroicons/react/24/outline";
+
+import {
+    Battery,
+    MapPin,
+    Navigation,
+    Clock3
+} from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 function DroneTable({
 
     drones,
@@ -6,176 +20,503 @@ function DroneTable({
 
     onDelete
 
-}){
+}) {
+    const navigate = useNavigate();
+    const role = localStorage.getItem("role");
 
-const role = localStorage.getItem("role");
+    function batteryColor(level) {
 
-function batteryColor(level) {
+        if (level >= 80)
+            return {
+                bar: "bg-emerald-500",
+                text: "text-emerald-400"
+            };
 
-    if (level >= 70) return "text-green-400";
+        if (level >= 50)
+            return {
+                bar: "bg-[#D4AF37]",
+                text: "text-[#D4AF37]"
+            };
 
-    if (level >= 40) return "text-yellow-400";
+        if (level >= 20)
+            return {
+                bar: "bg-orange-500",
+                text: "text-orange-400"
+            };
 
-    return "text-red-400";
-}
+        return {
+            bar: "bg-red-500",
+            text: "text-red-400"
+        };
 
-return (
+    }
 
-    <div className="bg-slate-800 rounded-xl shadow-lg overflow-hidden">
+    function statusStyle(status) {
 
-        <table className="w-full text-white">
+        switch (status) {
 
-            <thead className="bg-slate-700">
+            case "AVAILABLE":
 
-                <tr>
+                return {
+                    bg: "bg-emerald-500/10",
+                    text: "text-emerald-400",
+                    border: "border-emerald-500/20"
+                };
 
-                    <th className="p-4 text-left">
-                        🚁 Model
-                    </th>
+            case "IN_FLIGHT":
 
-                    <th className="p-4 text-left">
-                        🏭 Manufacturer
-                    </th>
+                return {
+                    bg: "bg-sky-500/10",
+                    text: "text-sky-400",
+                    border: "border-sky-500/20"
+                };
 
-                    <th className="p-4 text-center">
-                        🔋 Battery
-                    </th>
+            case "MAINTENANCE":
 
-                    <th className="p-4 text-center">
-                        📡 Status
-                    </th>
+                return {
+                    bg: "bg-orange-500/10",
+                    text: "text-orange-400",
+                    border: "border-orange-500/20"
+                };
 
-                    {role !== "VIEWER" && (
+            default:
 
-                        <th className="p-4 text-center">
+                return {
+                    bg: "bg-red-500/10",
+                    text: "text-red-400",
+                    border: "border-red-500/20"
+                };
 
-                            ⚙️ Actions
+        }
+
+    }
+
+    return (
+
+        <div
+            className="
+        overflow-hidden
+        rounded-3xl
+        border
+        border-[#232323]
+        bg-gradient-to-b
+        from-[#111111]
+        to-[#0A0A0A]
+        shadow-[0_30px_80px_rgba(0,0,0,.6)]
+transition-all
+duration-300
+hover:shadow-[0_35px_90px_rgba(212,175,55,.08)]
+    "
+        >
+
+            <table className="w-full">
+
+                <thead className="border-b border-[#2C2C2C] bg-gradient-to-r from-[#171717] to-[#101010]">
+
+                    <tr className="text-left">
+
+                        <th className="px-8 py-5 text-xs uppercase tracking-[0.22em] text-gray-500">
+
+                            Drone
 
                         </th>
 
-                    )}
+                        <th className="px-6 py-5 text-xs uppercase tracking-[0.22em] text-gray-500">
 
-                </tr>
+                            Telemetry
 
-            </thead>
+                        </th>
 
-            <tbody>
+                        <th className="px-6 py-5 text-xs uppercase tracking-[0.22em] text-gray-500">
 
-                {drones.length === 0 ? (
+                            Battery
 
-                    <tr>
+                        </th>
 
-                        <td
-                            colSpan="5"
-                            className="text-center p-8 text-gray-400">
+                        <th className="px-6 py-5 text-xs uppercase tracking-[0.22em] text-gray-500">
 
-                            No drones found.
+                            Status
 
-                        </td>
+                        </th>
+
+                        <th className="px-6 py-5 text-xs uppercase tracking-[0.22em] text-gray-500">
+
+                            Position
+
+                        </th>
+
+                        {role !== "VIEWER" && (
+
+                            <th className="px-6 py-5 text-center text-xs uppercase tracking-[0.22em] text-gray-500">
+
+                                Actions
+
+                            </th>
+
+                        )}
 
                     </tr>
 
-                ) : (
+                </thead>
 
-                    drones.map((drone) => (
+                <tbody>
 
-                        <tr
-                            key={drone.id}
-                            className="border-b border-slate-700 hover:bg-slate-700 transition-all duration-200">
+                    {drones.length === 0 ? (
 
-                            <td className="p-4 font-semibold">
-
-                                {drone.model}
-
-                            </td>
-
-                            <td className="p-4">
-
-                                {drone.manufacturer}
-
-                            </td>
+                        <tr>
 
                             <td
-                                className={`p-4 text-center font-semibold ${batteryColor(drone.batteryLevel)}`}>
+                                colSpan="5"
+                                className="px-8 py-20 text-center"
+                            >
 
-                                {drone.batteryLevel}%
+                                <div className="flex flex-col items-center">
 
-                            </td>
+                                    <PaperAirplaneIcon className="h-16 w-16 text-slate-600" />
 
-                            <td className="p-4 text-center">
+                                    <h2 className="mt-6 text-xl font-semibold text-white">
 
-                                <span
-                                    className={`px-3 py-1 rounded-full text-sm font-semibold
-                                        ${drone.status === "AVAILABLE"
-                                            ? "bg-green-600"
+                                        No Fleet Available
 
-                                            : drone.status === "IN_FLIGHT"
-                                                ? "bg-blue-600"
+                                    </h2>
 
-                                                : drone.status === "MAINTENANCE"
-                                                    ? "bg-yellow-500 text-black"
+                                    <p className="mt-2 text-slate-500">
 
-                                                    : "bg-red-600"
-                                        }`}>
+                                        Create your first drone to begin monitoring.
 
-                                    {drone.status}
+                                    </p>
 
-                                </span>
+                                </div>
 
                             </td>
 
-                            {role !== "VIEWER" && (
-
-                                <td className="p-4">
-
-                                    <div className="flex justify-center gap-2">
-
-                                        {(role === "ADMIN" || role === "OPERATOR") && (
-
-                                            <button
-
-                                                onClick={() => onEdit(drone)}
-
-                                                className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded transition">
-
-                                                ✏️
-
-                                            </button>
-
-                                        )}
-
-                                        {role === "ADMIN" && (
-
-                                            <button
-
-                                                onClick={() => onDelete(drone)}
-
-                                                className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded transition">
-
-                                                🗑️
-
-                                            </button>
-
-                                        )}
-
-                                    </div>
-
-                                </td>
-
-                            )}
                         </tr>
 
-                    ))
+                    ) : (
 
-                )}
+                        drones.map((drone) => {
 
-            </tbody>
+                            const battery = batteryColor(drone.batteryLevel);
 
-        </table>
+                            const status = statusStyle(drone.status);
 
-    </div>
+                            return (
 
-);
+                                <tr
+
+                                    key={drone.id}
+
+                                    onClick={() => navigate(`/drones/${drone.id}`)}
+
+                                    className="
+    cursor-pointer
+    border-b
+    border-[#232323]
+    transition-all
+    duration-300
+    hover:bg-[#171717]
+    hover:shadow-[inset_4px_0_0_#D4AF37]
+"
+
+                                >
+
+                                    {/* ================= DRONE ================= */}
+
+                                    <td className="px-8 py-7">
+
+                                        <div>
+
+                                            <h2 className="text-lg font-bold text-white">
+
+                                                {drone.model}
+
+                                            </h2>
+
+                                            <p className="mt-1 text-sm text-gray-500">
+
+                                                #{drone.serialNumber}
+
+                                            </p>
+
+                                            <p className="mt-3 text-sm text-[#D4AF37]">
+
+                                                {drone.manufacturer}
+
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                    {/* ================= TELEMETRY ================= */}
+
+                                    <td className="px-6 py-7">
+
+                                        <div className="space-y-3 text-sm">
+
+                                            <div className="flex items-center gap-2 text-gray-300">
+
+                                                <Navigation size={16} className="text-[#D4AF37]" />
+
+                                                <span>Altitude</span>
+
+                                                <span className="ml-auto font-semibold text-white">
+
+                                                    {drone.altitude ?? 0} m
+
+                                                </span>
+
+                                            </div>
+
+                                            <div className="flex items-center gap-2 text-gray-300">
+
+                                                <Clock3 size={16} className="text-[#D4AF37]" />
+
+                                                <span>Last Seen</span>
+
+                                                <span className="ml-auto text-white">
+
+                                                    {drone.lastSeen
+                                                        ? new Date(drone.lastSeen).toLocaleTimeString()
+                                                        : "--"}
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    {/* ================= BATTERY ================= */}
+
+                                    <td className="px-6 py-7">
+
+                                        <div className="flex items-center gap-3">
+
+                                            <Battery
+                                                size={18}
+                                                className={battery.text}
+                                            />
+
+                                            <div className="flex-1">
+
+                                                <div className="h-2 overflow-hidden rounded-full bg-[#222]">
+
+                                                    <div
+
+                                                        className={`h-full ${battery.bar}`}
+
+                                                        style={{
+
+                                                            width: `${drone.batteryLevel}%`
+
+                                                        }}
+
+                                                    />
+
+                                                </div>
+
+                                                <p className={`mt-2 text-sm font-semibold ${battery.text}`}>
+
+                                                    {drone.batteryLevel}%
+
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    {/* ================= STATUS ================= */}
+
+                                    <td className="px-6 py-7">
+
+                                        <span
+
+                                            className={`
+                        inline-flex
+                        items-center
+                        gap-2
+                        rounded-full
+                        border
+                        px-4
+                        py-2
+                        text-xs
+                        font-bold
+                        uppercase
+                        tracking-[0.15em]
+                        ${status.bg}
+                        ${status.text}
+                        ${status.border}
+                    `}
+
+                                        >
+
+                                            <span className="h-2 w-2 rounded-full bg-current"></span>
+
+                                            {drone.status.replace("_", " ")}
+
+                                        </span>
+
+                                    </td>
+
+                                    {/* ================= POSITION ================= */}
+
+                                    <td className="px-6 py-7">
+
+                                        <div className="space-y-2 text-sm">
+
+                                            <div className="flex items-center gap-2 text-gray-300">
+
+                                                <MapPin size={16} className="text-[#D4AF37]" />
+
+                                                {drone.latitude?.toFixed(5) ?? "--"}
+
+                                            </div>
+
+                                            <div className="pl-6 text-gray-500">
+
+                                                {drone.longitude?.toFixed(5) ?? "--"}
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+                                    {/* ================= ACTIONS ================= */}
+
+                                    {role !== "VIEWER" && (
+
+                                        <td className="px-6 py-7">
+
+                                            <div className="flex items-center justify-center gap-3">
+
+                                                <button
+
+                                                    onClick={(e) => {
+
+                                                        e.stopPropagation();
+
+                                                        navigate(`/drones/${drone.id}`);
+
+                                                    }}
+
+                                                    className="
+                    rounded-xl
+                    border
+                    border-[#D4AF37]/20
+                    bg-[#D4AF37]/10
+                    p-3
+                    text-[#D4AF37]
+                    transition-all
+                    duration-300
+                    hover:scale-110
+                    hover:bg-[#D4AF37]
+                    hover:text-black
+                "
+
+                                                    title="View Drone"
+
+                                                >
+
+                                                    <EyeIcon className="h-5 w-5" />
+
+                                                </button>
+
+                                                {(role === "ADMIN" || role === "OPERATOR") && (
+
+                                                    <button
+
+                                                        onClick={(e) => {
+
+                                                            e.stopPropagation();
+
+                                                            onEdit(drone);
+
+                                                        }}
+
+                                                        className="
+                        rounded-xl
+                        border
+                        border-cyan-500/20
+                        bg-cyan-500/10
+                        p-3
+                        text-cyan-400
+                        transition-all
+                        duration-300
+                        hover:scale-110
+                        hover:bg-cyan-500
+                        hover:text-white
+                    "
+
+                                                        title="Edit"
+
+                                                    >
+
+                                                        <PencilSquareIcon className="h-5 w-5" />
+
+                                                    </button>
+
+                                                )}
+
+                                                {role === "ADMIN" && (
+
+                                                    <button
+
+                                                        onClick={(e) => {
+
+                                                            e.stopPropagation();
+
+                                                            onDelete(drone);
+
+                                                        }}
+
+                                                        className="
+                        rounded-xl
+                        border
+                        border-red-500/20
+                        bg-red-500/10
+                        p-3
+                        text-red-400
+                        transition-all
+                        duration-300
+                        hover:scale-110
+                        hover:bg-red-500
+                        hover:text-white
+                    "
+
+                                                        title="Delete"
+
+                                                    >
+
+                                                        <TrashIcon className="h-5 w-5" />
+
+                                                    </button>
+
+                                                )}
+
+                                            </div>
+
+                                        </td>
+
+                                    )}
+
+                                </tr>
+
+                            );
+
+                        })
+
+                    )}
+
+                </tbody>
+            </table>
+
+        </div>
+
+    );
 
 }
 

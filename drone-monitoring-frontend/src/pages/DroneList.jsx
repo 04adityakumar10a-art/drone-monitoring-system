@@ -1,23 +1,33 @@
-import { useEffect, useState } from "react";
-
+import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
 
-import DashboardLayout from "../layouts/DashboardLayout";
-
+import useDroneStatus from "../hooks/useDroneStatus";
 import SearchBar from "../components/SearchBar";
 import DroneTable from "../components/DroneTable";
 import AddDroneModal from "../components/AddDroneModal";
 import EditDroneModal from "../components/EditDroneModal";
 import DeleteDroneModal from "../components/DeleteDroneModal";
 import Pagination from "../components/Pagination";
+import FleetHeader from "./FleetManagement/components/FleetHeader";
+import { subscribe } from "../services/websocket";
+
+import toast from "react-hot-toast";
 
 function DroneList() {
 
+    const [statusFilter, setStatusFilter] = useState("ALL");
+
+    const [manufacturerFilter, setManufacturerFilter] = useState("ALL");
+
+    const [batteryFilter, setBatteryFilter] = useState("ALL");
+    
+    const liveDrones = useDroneStatus();
+
     const [page, setPage] = useState(0);
 
-    const [totalPages, setTotalPages] = useState(0);
-
     const pageSize = 10;
+
+    const [totalPages, setTotalPages] = useState(0);
 
     const [drones, setDrones] = useState([]);
 
@@ -33,20 +43,22 @@ function DroneList() {
 
     const [selectedDrone, setSelectedDrone] = useState(null);
 
-    useEffect(() => {
+    /*
+    =============================================
+                FETCH DRONES
+    =============================================
+    */
 
-        fetchDrones();
-
-    }, [page]);
-
-    async function fetchDrones() {
+    const fetchDrones = useCallback(async () => {
 
         try {
 
             setLoading(true);
 
             const response = await api.get(
+
                 `/api/drones?page=${page}&size=${pageSize}`
+
             );
 
             setDrones(response.data.content);
@@ -57,7 +69,9 @@ function DroneList() {
 
         catch (error) {
 
-            console.log(error);
+            console.error(error);
+
+            toast.error("Failed to load drones");
 
         }
 
@@ -67,19 +81,200 @@ function DroneList() {
 
         }
 
-    }
+    }, [page]);
 
-    const filteredDrones = drones.filter(drone =>
+    /*
+    =============================================
+                INITIAL LOAD
+    =============================================
+    */
 
-        drone.model.toLowerCase().includes(search.toLowerCase()) ||
+    useEffect(() => {
 
-        drone.manufacturer.toLowerCase().includes(search.toLowerCase())
+        fetchDrones();
 
-    );
+    }, [fetchDrones]);
+
+    /*
+    =============================================
+                WEBSOCKET EVENTS
+    =============================================
+    */
+
+    useEffect(() => {
+
+        const subscription = subscribe(
+
+            "/topic/drones",
+
+            (event) => {
+
+                switch (event.event) {
+
+                    case "DRONE_CREATED":
+
+                        toast.success(
+
+                            `${event.data.model} added successfully`
+
+                        );
+
+                        break;
+
+                    case "DRONE_UPDATED":
+
+                        toast.success(
+
+                            `${event.data.model} updated successfully`
+
+                        );
+
+                        break;
+
+                    case "DRONE_DELETED":
+
+                        toast.success(
+
+                            "Drone deleted successfully"
+
+                        );
+
+                        break;
+
+                    default:
+
+                        console.warn(
+
+                            "Unknown Event",
+
+                            event
+
+                        );
+
+                        return;
+
+                }
+
+                requestAnimationFrame(() => {
+
+                    fetchDrones();
+
+                });
+
+            }
+
+        );
+
+        return () => {
+
+            subscription?.unsubscribe();
+
+        };
+
+    }, [fetchDrones]);
+
+
+    useEffect(() => {
+
+        setDrones(previous =>
+
+            previous.map(drone =>
+
+                liveDrones[drone.id]
+
+                    ? {
+
+                        ...drone,
+
+                        ...liveDrones[drone.id]
+
+                    }
+
+                    : drone
+
+            )
+
+        );
+
+    }, [liveDrones]);
+
+    /*
+    =============================================
+                    SEARCH
+    =============================================
+    */
+
+    const filteredDrones = drones.filter((drone) => {
+
+        const term = search.toLowerCase();
+
+        const matchesSearch =
+            drone.model.toLowerCase().includes(term) ||
+            drone.manufacturer.toLowerCase().includes(term) ||
+            drone.serialNumber.toLowerCase().includes(term);
+
+        const matchesStatus =
+
+            statusFilter === "ALL"
+
+            ||
+
+            drone.status === statusFilter;
+
+        const matchesManufacturer =
+
+            manufacturerFilter === "ALL"
+
+            ||
+
+            drone.manufacturer === manufacturerFilter;
+
+        let matchesBattery = true;
+
+        switch (batteryFilter) {
+
+            case "HIGH":
+
+                matchesBattery = drone.batteryLevel >= 75;
+
+                break;
+
+            case "MEDIUM":
+
+                matchesBattery =
+                    drone.batteryLevel >= 40 &&
+                    drone.batteryLevel < 75;
+
+                break;
+
+            case "LOW":
+
+                matchesBattery = drone.batteryLevel < 40;
+
+                break;
+
+            default:
+
+                matchesBattery = true;
+
+        }
+
+        return (
+
+            matchesSearch &&
+
+            matchesStatus &&
+
+            matchesManufacturer &&
+
+            matchesBattery
+
+        );
+
+    });
 
     return (
-
-        <DashboardLayout>
+        <>
 
             {/* Header */}
 
@@ -87,35 +282,9 @@ function DroneList() {
 
                 <div>
 
-                    <h1 className="text-4xl font-bold text-white">
-
-                        🚁 Drone Management
-
-                    </h1>
-
-                    <p className="text-gray-400 mt-2">
-
-                        Manage your complete drone fleet from one place.
-
-                    </p>
+                    <FleetHeader drones={filteredDrones} />
 
                 </div>
-
-                {/* <div className="bg-slate-800 rounded-xl px-6 py-4 shadow-lg">
-
-                    <p className="text-gray-400 text-sm">
-
-                        Total Drones
-
-                    </p>
-
-                    <h2 className="text-3xl font-bold text-cyan-400">
-
-                        {drones.length}
-
-                    </h2>
-
-                </div> */}
 
             </div>
 
@@ -127,11 +296,42 @@ function DroneList() {
 
                 setSearch={setSearch}
 
-                onAddDrone={() => setShowModal(true)}
+                statusFilter={statusFilter}
+
+                setStatusFilter={setStatusFilter}
+
+                manufacturerFilter={manufacturerFilter}
+
+                setManufacturerFilter={setManufacturerFilter}
+
+                batteryFilter={batteryFilter}
+
+                setBatteryFilter={setBatteryFilter}
+
+                manufacturers={[
+
+                    "ALL",
+
+                    ...new Set(
+
+                        drones.map(
+
+                            d => d.manufacturer
+
+                        )
+
+                    )
+
+                ]}
+
+                onAddDrone={() =>
+
+                    setShowModal(true)
+
+                }
 
             />
-
-            {/* Drone Table */}
+            {/* Loading */}
 
             {loading ? (
 
@@ -169,7 +369,15 @@ function DroneList() {
 
                     <p className="text-gray-400 mt-3">
 
-                        Click <span className="font-semibold text-cyan-400">Add Drone</span> to create your first drone.
+                        Click
+
+                        <span className="font-semibold text-cyan-400">
+
+                            {" "}Add Drone{" "}
+
+                        </span>
+
+                        to create your first drone.
 
                     </p>
 
@@ -200,77 +408,59 @@ function DroneList() {
                 />
 
             )}
-
-            {/* Add */}
+            {/* Add Drone Modal */}
 
             <AddDroneModal
-
                 isOpen={showModal}
-
                 onClose={() => setShowModal(false)}
-
                 onDroneAdded={() => {
-
-                    fetchDrones();
-
+                    setShowModal(false);
                 }}
-
             />
 
-            {/* Edit */}
+            {/* Edit Drone Modal */}
 
             <EditDroneModal
-
                 isOpen={showEditModal}
-
                 drone={selectedDrone}
-
-                onClose={() => setShowEditModal(false)}
-
-                onDroneUpdated={() => {
-
-                    fetchDrones();
-
+                onClose={() => {
+                    setShowEditModal(false);
+                    setSelectedDrone(null);
                 }}
-
+                onDroneUpdated={() => {
+                    setShowEditModal(false);
+                    setSelectedDrone(null);
+                }}
             />
 
-            {/* Delete */}
+            {/* Delete Drone Modal */}
 
             <DeleteDroneModal
-
                 isOpen={showDeleteModal}
-
                 drone={selectedDrone}
-
-                onClose={() => setShowDeleteModal(false)}
-
-                onDroneDeleted={() => {
-
-                    fetchDrones();
-
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setSelectedDrone(null);
                 }}
-
+                onDroneDeleted={() => {
+                    setShowDeleteModal(false);
+                    setSelectedDrone(null);
+                }}
             />
 
             {/* Pagination */}
 
-            {!loading && filteredDrones.length > 0 && (
+            {!loading && totalPages > 0 && (
 
                 <Pagination
-
                     page={page}
-
                     totalPages={totalPages}
-
                     setPage={setPage}
-
                 />
 
             )}
 
-        </DashboardLayout>
-
+        </>
     );
 
 }

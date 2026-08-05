@@ -1,62 +1,188 @@
+import {
+    Plane,
+    CircleCheckBig,
+    TriangleAlert,
+    BatteryCharging,
+    TrendingUp
+} from "lucide-react";
+
+import { motion } from "framer-motion";
+
 function DashboardStats({ stats }) {
 
     const cards = [
 
         {
-            title: "🚁 Total Drones",
+            title: "FLEET",
             value: stats.totalDrones,
-            color: "border-cyan-500"
+            icon: Plane,
+            color: "#D4AF37",
+            progress: 100
         },
 
         {
-            title: "🟢 Available",
+            title: "AVAILABLE",
             value: stats.availableDrones,
-            color: "border-green-500"
+            icon: CircleCheckBig,
+            color: "#22C55E",
+            progress:
+                stats.totalDrones > 0
+                    ? (stats.availableDrones / stats.totalDrones) * 100
+                    : 0
         },
 
         {
-            title: "🔋 Low Battery",
+            title: "LOW BATTERY",
             value: stats.lowBatteryDrones,
-            color: "border-yellow-500"
+            icon: TriangleAlert,
+            color: "#F59E0B",
+            progress:
+                stats.totalDrones > 0
+                    ? (stats.lowBatteryDrones / stats.totalDrones) * 100
+                    : 0
         },
 
         {
-            title: "📊 Avg Battery",
-            value: `${Number(stats.averageBattery).toFixed(1)}%`,
-            color: "border-purple-500"
+            title: "AVG BATTERY",
+            value: Number(stats.averageBattery).toFixed(1),
+            suffix: "%",
+            icon: BatteryCharging,
+            color: "#3B82F6",
+            progress: Number(stats.averageBattery)
         }
 
     ];
 
     return (
 
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
+        <div className="mb-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
-            {
+            {cards.map((card, index) => {
 
-                cards.map((card) => (
+                const Icon = card.icon;
 
-                    <div
+                return (
+
+                    <motion.div
+
                         key={card.title}
-                        className={`bg-slate-800 rounded-xl border-l-4 ${card.color} p-6 shadow hover:scale-105 transition duration-300`}>
 
-                        <p className="text-gray-400">
+                        initial={{ opacity: 0, y: 25 }}
 
-                            {card.title}
+                        animate={{ opacity: 1, y: 0 }}
 
-                        </p>
+                        transition={{
+                            delay: index * 0.08,
+                            duration: 0.4
+                        }}
 
-                        <h2 className="text-4xl font-bold text-white mt-3">
+                        whileHover={{
+                            y: -4
+                        }}
 
-                            {card.value}
+                        className="rounded-2xl border border-[#262626] bg-[#111111] p-6 transition-all hover:border-[#D4AF37]"
 
-                        </h2>
+                    >
 
-                    </div>
+                        <div className="flex items-center justify-between">
 
-                ))
+                            <div>
 
-            }
+                                <p className="text-xs uppercase tracking-[0.25em] text-gray-500">
+
+                                    {card.title}
+
+                                </p>
+
+                                <h2 className="mt-4 text-4xl font-bold text-white">
+
+                                    {card.value}
+
+                                    {card.suffix}
+
+                                </h2>
+
+                            </div>
+
+                            <div
+
+                                className="flex h-14 w-14 items-center justify-center rounded-xl"
+
+                                style={{
+
+                                    backgroundColor: `${card.color}15`
+
+                                }}
+
+                            >
+
+                                <Icon
+
+                                    size={28}
+
+                                    color={card.color}
+
+                                />
+
+                            </div>
+
+                        </div>
+
+                        {/* Progress */}
+
+                        <div className="mt-6">
+
+                            <div className="h-2 rounded-full bg-[#1E1E1E]">
+
+                                <motion.div
+
+                                    initial={{ width: 0 }}
+
+                                    animate={{
+
+                                        width: `${Math.min(card.progress, 100)}%`
+
+                                    }}
+
+                                    transition={{ duration: 1 }}
+
+                                    className="h-2 rounded-full"
+
+                                    style={{
+
+                                        backgroundColor: card.color
+
+                                    }}
+
+                                />
+
+                            </div>
+
+                        </div>
+
+                        <div className="mt-5 flex items-center justify-between">
+
+                            <span className="text-xs text-gray-500">
+
+                                Last Updated
+
+                            </span>
+
+                            <span className="flex items-center gap-1 text-sm font-medium text-[#D4AF37]">
+
+                                <TrendingUp size={15} />
+
+                                Live
+
+                            </span>
+
+                        </div>
+
+                    </motion.div>
+
+                );
+
+            })}
 
         </div>
 

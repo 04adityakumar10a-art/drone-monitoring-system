@@ -26,123 +26,241 @@ function DroneForm({
 
         formData.batteryLevel <= 100;
 
+    const inputClass = `
+        w-full
+        rounded-2xl
+        border
+        border-cyan-500/15
+        bg-slate-900/60
+        px-5
+        py-2.5
+        text-white
+        placeholder:text-slate-500
+        outline-none
+        transition-all
+        duration-300
+        focus:border-cyan-400
+        focus:ring-2
+        focus:ring-cyan-500/20
+    `;
+
     return (
 
-        <form onSubmit={handleSubmit}>
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-4"
+        >
 
-            <input
+            {/* Model */}
 
-                name="model"
+            <div>
 
-                placeholder="Model"
+                <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.20em] text-slate-400">
 
-                value={formData.model}
+                    Drone Model
 
-                onChange={handleChange}
+                </label>
 
-                className="w-full mb-4 p-3 rounded bg-slate-700 text-white"
+                <input
 
-                required
+                    name="model"
 
-            />
+                    placeholder="e.g. DJI Mavic 3"
 
-            <input
+                    value={formData.model}
 
-                name="manufacturer"
+                    onChange={handleChange}
 
-                placeholder="Manufacturer"
+                    className={inputClass}
 
-                value={formData.manufacturer}
+                    required
 
-                onChange={handleChange}
+                />
 
-                className="w-full mb-4 p-3 rounded bg-slate-700 text-white"
+            </div>
 
-                required
+            {/* Manufacturer */}
 
-            />
+            <div>
 
-            <input
+                <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.20em] text-slate-400">
 
-                name="serialNumber"
+                    Manufacturer
 
-                placeholder="Serial Number"
+                </label>
 
-                value={formData.serialNumber}
+                <input
 
-                onChange={handleChange}
+                    name="manufacturer"
 
-                className="w-full mb-4 p-3 rounded bg-slate-700 text-white"
+                    placeholder="e.g. DJI"
 
-                required
+                    value={formData.manufacturer}
 
-            />
+                    onChange={handleChange}
 
-            <input
+                    className={inputClass}
 
-                type="number"
+                    required
 
-                name="batteryLevel"
+                />
 
-                placeholder="Battery"
+            </div>
 
-                min="0"
+            {/* Serial */}
 
-                max="100"
+            <div>
 
-                value={formData.batteryLevel}
+                <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.20em] text-slate-400">
 
-                onChange={handleChange}
+                    Serial Number
 
-                className="w-full mb-2 p-3 rounded bg-slate-700 text-white"
+                </label>
 
-                required
+                <input
 
-            />
+                    name="serialNumber"
 
-            {formData.batteryLevel !== "" &&
-                (formData.batteryLevel < 0 ||
-                 formData.batteryLevel > 100) && (
+                    placeholder="DR-1001"
 
-                <p className="text-red-400 text-sm mb-3">
+                    value={formData.serialNumber}
 
-                    Battery must be between 0 and 100.
+                    onChange={handleChange}
 
-                </p>
+                    className={inputClass}
 
-            )}
+                    required
 
-            <select
+                />
 
-                name="status"
+            </div>
 
-                value={formData.status}
+            {/* Battery */}
 
-                onChange={handleChange}
+            <div>
 
-                className="w-full mb-6 p-3 rounded bg-slate-700 text-white">
+                <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.20em] text-slate-400">
 
-                <option value="AVAILABLE">
+                    Battery Level
 
-                    AVAILABLE
+                </label>
 
-                </option>
+                <input
 
-                <option value="IN_FLIGHT">
+                    type="number"
 
-                    IN FLIGHT
+                    name="batteryLevel"
 
-                </option>
+                    min="0"
 
-                <option value="MAINTENANCE">
+                    max="100"
 
-                    MAINTENANCE
+                    placeholder="0 - 100"
 
-                </option>
+                    value={formData.batteryLevel}
 
-            </select>
+                    onChange={handleChange}
 
-            <div className="flex justify-end gap-3">
+                    className={inputClass}
+
+                    required
+
+                />
+
+                {formData.batteryLevel !== "" && (
+
+                    <div className="mt-3">
+
+                        <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+
+                            <div
+
+                                className={`h-full transition-all duration-300 ${formData.batteryLevel >= 70
+                                    ? "bg-emerald-400"
+                                    : formData.batteryLevel >= 40
+                                        ? "bg-amber-400"
+                                        : "bg-red-500"
+                                    }`}
+
+                                style={{
+
+                                    width: `${formData.batteryLevel}%`
+
+                                }}
+
+                            />
+
+                        </div>
+
+                        <div className="mt-2 flex justify-between text-sm">
+
+                            <span className="text-slate-400">
+
+                                Battery
+
+                            </span>
+
+                            <span className="font-semibold text-cyan-400">
+
+                                {formData.batteryLevel}%
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                )}
+
+            </div>
+
+            {/* Status */}
+
+            <div>
+
+                <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.20em] text-slate-400">
+
+                    Status
+
+                </label>
+
+                <select
+
+                    name="status"
+
+                    value={formData.status}
+
+                    onChange={handleChange}
+
+                    className={inputClass}
+
+                >
+
+                    <option value="AVAILABLE">
+
+                        AVAILABLE
+
+                    </option>
+
+                    <option value="IN_FLIGHT">
+
+                        IN FLIGHT
+
+                    </option>
+
+                    <option value="MAINTENANCE">
+
+                        MAINTENANCE
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            {/* Buttons */}
+
+            <div className="flex justify-end gap-4 pt-4">
 
                 <button
 
@@ -150,7 +268,21 @@ function DroneForm({
 
                     onClick={onCancel}
 
-                    className="bg-gray-600 hover:bg-gray-700 px-5 py-2 rounded">
+                    className="
+                        rounded-2xl
+                        border
+                        border-slate-700
+                        px-6
+                        py-3
+                        text-slate-300
+                        transition-all
+                        duration-300
+                        hover:border-red-400
+                        hover:bg-red-500/10
+                        hover:text-red-400
+                    "
+
+                >
 
                     Cancel
 
@@ -162,15 +294,31 @@ function DroneForm({
 
                     disabled={!isFormValid}
 
-                    className={`px-5 py-2 rounded text-white
+                    className={`
+                        rounded-2xl
+                        px-8
+                        py-2.5
+                        font-semibold
+                        transition-all
+                        duration-300
+                        ${isFormValid
+                            ? `
+                                    bg-gradient-to-r
+                                    from-cyan-500
+                                    to-blue-600
+                                    text-white
+                                    hover:-translate-y-1
+                                    hover:shadow-[0_0_30px_rgba(6,182,212,.40)]
+                                  `
+                            : `
+                                    cursor-not-allowed
+                                    bg-slate-700
+                                    text-slate-500
+                                  `
+                        }
+                    `}
 
-                    ${isFormValid
-
-                        ? "bg-cyan-500 hover:bg-cyan-600"
-
-                        : "bg-gray-500 cursor-not-allowed"
-
-                    }`}>
+                >
 
                     {submitText}
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
+import { tokenStorage } from "../utils/tokenStorage";
 
 let isLoggingOut = false;
 
@@ -13,7 +14,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
 
-        const token = localStorage.getItem("token");
+        const token = tokenStorage.getToken();
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -44,8 +45,10 @@ api.interceptors.response.use(
                 "Your session has expired. Please log in again."
             );
 
-            localStorage.clear();
+            tokenStorage.clear();
 
+            localStorage.removeItem("role");
+            localStorage.removeItem("username");
             setTimeout(() => {
 
                 window.location.replace("/");

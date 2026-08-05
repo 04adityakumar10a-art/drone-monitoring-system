@@ -17,7 +17,7 @@ import {
 } from "recharts";
 
 function BatteryBarChart({ batteryData  }) {
-console.log(batteryData);
+
     return (
 
         <div className="bg-slate-800 rounded-xl p-6 shadow-lg">

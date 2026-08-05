@@ -1,35 +1,97 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import {
+    Search,
+    Bell,
+    LogOut,
+    ShieldCheck,
+    CalendarDays,
+    Clock3,
+    PanelLeft
+} from "lucide-react";
+import { useSidebar } from "../context/SidebarContext";
 function Navbar() {
 
     const navigate = useNavigate();
 
-    const username = localStorage.getItem("username") || "User";
+    const username = localStorage.getItem("username") || "Operator";
 
     const role = localStorage.getItem("role") || "VIEWER";
+    const { toggleSidebar } = useSidebar();
+    const [date, setDate] = useState("");
+
+    const [time, setTime] = useState("");
+
+    useEffect(() => {
+
+        function updateClock() {
+
+            const now = new Date();
+
+            setDate(
+
+                now.toLocaleDateString("en-IN", {
+
+                    day: "2-digit",
+
+                    month: "short",
+
+                    year: "numeric"
+
+                })
+
+            );
+
+            setTime(
+
+                now.toLocaleTimeString("en-IN", {
+
+                    hour: "2-digit",
+
+                    minute: "2-digit",
+
+                    second: "2-digit",
+
+                    hour12: true
+
+                })
+
+            );
+
+        }
+
+        updateClock();
+
+        const timer = setInterval(updateClock, 1000);
+
+        return () => clearInterval(timer);
+
+    }, []);
 
     function logout() {
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
+        localStorage.clear();
 
         navigate("/");
 
     }
 
-    function getRoleColor() {
+    function roleColor() {
 
         switch (role) {
 
             case "ADMIN":
-                return "bg-red-500";
+
+                return "text-[#D4AF37]";
 
             case "OPERATOR":
-                return "bg-amber-500";
+
+                return "text-blue-400";
 
             default:
-                return "bg-cyan-500";
+
+                return "text-gray-400";
 
         }
 
@@ -37,63 +99,291 @@ function Navbar() {
 
     return (
 
-        <nav className="bg-slate-800 border-b border-slate-700 shadow-lg px-8 py-4 flex justify-between items-center">
+        <header className="sticky top-0 z-50 border-b border-[#232323] bg-[#0A0A0A]/95 backdrop-blur-xl">
 
-            <div>
+            <div className="mx-auto flex h-20 items-center justify-between px-8">
 
-                <h1 className="text-3xl font-bold text-cyan-400">
+                {/* LEFT */}
 
-                    🚁 Drone Monitoring System
+                <div className="flex flex-1 items-center gap-6 min-w-0">
 
-                </h1>
+                    {/* Sidebar Toggle */}
 
-                <p className="text-gray-400 text-sm">
+                    <button
 
-                    Real-Time Fleet Management Dashboard
+                        onClick={toggleSidebar}
 
-                </p>
+                        className="
+            flex
+            h-12
+            w-12
+            flex-shrink-0
+            items-center
+            justify-center
+            rounded-xl
+            border
+            border-[#262626]
+            bg-[#111111]
+            text-gray-400
+            transition-all
+            duration-300
+            hover:border-[#D4AF37]
+            hover:bg-[#171717]
+            hover:text-[#D4AF37]
+        "
 
-            </div>
-
-            <div className="flex items-center gap-5">
-
-                <div className="w-12 h-12 rounded-full bg-cyan-600 flex items-center justify-center text-xl font-bold text-white">
-
-                    {username.charAt(0).toUpperCase()}
-
-                </div>
-
-                <div className="text-right">
-
-                    <h2 className="text-white font-semibold text-lg">
-
-                        {username}
-
-                    </h2>
-
-                    <span
-                        className={`${getRoleColor()} text-white text-xs px-3 py-1 rounded-full font-semibold`}
                     >
-                        {role}
-                    </span>
+
+                        <PanelLeft size={20} />
+
+                    </button>
+
+                    {/* Title */}
+
+                    <div className="min-w-[180px]">
+
+                        <h1 className="text-2xl font-black tracking-[0.25em] text-white">
+
+                            FLEET OPS
+
+                        </h1>
+
+                        <div className="mt-2 h-[3px] w-14 rounded-full bg-[#D4AF37]" />
+
+                        <p className="mt-2 text-[11px] uppercase tracking-[0.25em] text-gray-500">
+
+                            Drone Fleet Platform
+
+                        </p>
+
+                    </div>
+
+                    {/* Search */}
+
+                    <div className="relative flex-1 max-w-[360px] xl:max-w-[420px]">
+
+                        <Search
+
+                            size={18}
+
+                            className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"
+
+                        />
+
+                        <input
+
+                            type="text"
+
+                            placeholder="Search drones, operators, missions..."
+
+                            className="
+                h-12
+                w-full
+                rounded-2xl
+                border
+                border-[#262626]
+                bg-[#111111]
+                pl-14
+                pr-5
+                text-white
+                placeholder:text-gray-500
+                outline-none
+                transition-all
+                duration-300
+                focus:border-[#D4AF37]
+                focus:ring-2
+                focus:ring-[#D4AF37]/20
+            "
+
+                        />
+
+                    </div>
 
                 </div>
 
-                <button
+                {/* RIGHT */}
 
-                    onClick={logout}
+                <div className="flex items-center gap-5">
 
-                    className="bg-red-600 hover:bg-red-700 transition px-5 py-2 rounded-lg text-white font-semibold"
+                    {/* DATE */}
 
-                >
+                    <div className="flex h-14 items-center gap-2 rounded-2xl border border-[#262626] bg-[#111111] px-4">
 
-                    🚪 Logout
+                        <CalendarDays
 
-                </button>
+                            size={16}
+
+                            className="text-[#D4AF37]"
+
+                        />
+
+                        <span className="text-sm text-gray-300">
+
+                            {date}
+
+                        </span>
+
+                    </div>
+
+                    {/* TIME */}
+
+                    <div className="flex h-14 items-center gap-2 rounded-2xl border border-[#262626] bg-[#111111] px-4">
+
+                        <Clock3
+
+                            size={16}
+
+                            className="text-[#D4AF37]"
+
+                        />
+
+                        <span className="text-lg font-bold tabular-nums text-white">
+
+                            {time}
+
+                        </span>
+
+                    </div>
+                    {/* NOTIFICATIONS */}
+
+                    <button
+
+                        className="
+                            relative
+                            flex
+                            h-14
+                            w-14
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            border
+                            border-[#262626]
+                            bg-[#111111]
+                            transition-all
+                            duration-300
+                            hover:border-[#D4AF37]
+                            hover:bg-[#171717]
+                        "
+
+                    >
+
+                        <Bell
+                            size={19}
+                            className="text-white"
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                right-4
+                                top-4
+                                h-2
+                                w-2
+                                rounded-full
+                                bg-red-500
+                            "
+                        />
+
+                    </button>
+
+                    {/* USER */}
+
+                    <div
+
+                        className="
+                            flex
+                            h-14
+                            items-center
+                            gap-3
+                            rounded-2xl
+                            border
+                            border-[#262626]
+                            bg-[#111111]
+                            px-4
+                        "
+
+                    >
+
+                        <div
+
+                            className="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+                                rounded-xl
+                                border
+                                border-[#D4AF37]/30
+                                bg-[#181818]
+                                font-bold
+                                text-white
+                            "
+
+                        >
+
+                            {username.charAt(0).toUpperCase()}
+
+                        </div>
+
+                        <div>
+
+                            <h2 className="text-sm font-semibold leading-none text-white">
+
+                                {username}
+
+                            </h2>
+
+                            <div
+
+                                className={`mt-1 flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.18em] ${roleColor()}`}
+
+                            >
+
+                                <ShieldCheck size={12} />
+
+                                {role}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {/* LOGOUT */}
+
+                    <button
+
+                        onClick={logout}
+
+                        className="
+                            flex
+                            h-14
+                            w-14
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            border
+                            border-[#262626]
+                            bg-[#111111]
+                            transition-all
+                            duration-300
+                            hover:border-red-500
+                            hover:bg-red-500
+                            hover:text-white
+                        "
+
+                    >
+
+                        <LogOut size={19} />
+
+                    </button>
+
+                </div>
 
             </div>
 
-        </nav>
+        </header>
 
     );
 

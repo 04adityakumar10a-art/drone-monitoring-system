@@ -6,7 +6,8 @@ import {
     UserIcon,
     LockClosedIcon
 } from "@heroicons/react/24/outline";
-
+import { useAuth } from "../context/AuthContext";
+import { tokenStorage } from "../utils/tokenStorage";
 import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 
@@ -20,6 +21,8 @@ import logo from "../assets/images/dms-logo.png";
 function Login() {
 
     const navigate = useNavigate();
+
+    const { setToken } = useAuth();
 
     const [username, setUsername] = useState("");
 
@@ -47,10 +50,7 @@ function Login() {
                 }
             );
 
-            localStorage.setItem(
-                "token",
-                response.data.token
-            );
+            setToken(response.data.token);
 
             localStorage.setItem(
                 "role",
@@ -107,11 +107,11 @@ function Login() {
     return (
 
         <>
-
+            {/* 
             <Toaster
                 position="top-right"
                 reverseOrder={false}
-            />
+            /> */}
 
             <div
 
@@ -473,17 +473,56 @@ drop-shadow-[0_0_10px_#06b6d4]
 
                                     <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
 
-                                    <p className="mt-6 text-center text-sm text-slate-400">
+                                    <div className="pt-6">
 
-                                        Live Telemetry • GPS Tracking • Fleet Analytics
+                                        <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
 
-                                    </p>
+                                        <div className="mt-6 flex flex-col gap-4">
 
-                                    <p className="mt-2 text-center text-xs text-slate-500">
+                                            <button
 
-                                        Version 1.0 •
+                                                type="button"
 
-                                    </p>
+                                                onClick={() => navigate("/register")}
+
+                                                className="
+                w-full
+                rounded-2xl
+                border
+                border-cyan-500/30
+                bg-cyan-500/10
+                py-4
+                font-semibold
+                tracking-wide
+                text-cyan-300
+                transition-all
+                duration-300
+                hover:border-cyan-400
+                hover:bg-cyan-500/20
+                hover:text-white
+            "
+
+                                            >
+
+                                                CREATE NEW ACCOUNT
+
+                                            </button>
+
+                                            <p className="text-center text-sm text-slate-400">
+
+                                                Live Telemetry • GPS Tracking • Fleet Analytics
+
+                                            </p>
+
+                                            <p className="text-center text-xs text-slate-500">
+
+                                                Version 1.0 • Enterprise Edition
+
+                                            </p>
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
