@@ -1,5 +1,12 @@
 package com.aditya.dronemonitoring.service;
 
+import com.aditya.dronemonitoring.dto.UpdatePasswordRequestDTO;
+import com.aditya.dronemonitoring.dto.UpdateStatusRequestDTO;
+import com.aditya.dronemonitoring.dto.UpdateUserRequestDTO;
+import com.aditya.dronemonitoring.entity.Role;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.aditya.dronemonitoring.dto.CreateUserRequestDTO;
 import com.aditya.dronemonitoring.dto.RegisterRequestDTO;
 import com.aditya.dronemonitoring.dto.RegisterResponseDTO;
@@ -202,5 +209,125 @@ public class UserService {
                 );
 
         }
+
+        public UserResponseDTO updateUser(
+                        Long id,
+                        UpdateUserRequestDTO request) {
+
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found"));
+
+                if (userRepository.existsByUsernameAndIdNot(
+                                request.getUsername(),
+                                id)) {
+
+                        throw new UsernameAlreadyExistsException(
+                                        "Username already exists");
+                }
+
+                if (userRepository.existsByEmailAndIdNot(
+                                request.getEmail(),
+                                id)) {
+
+                        throw new EmailAlreadyExistsException(
+                                        "Email already exists");
+                }
+
+                user.setUsername(
+                                request.getUsername());
+
+                user.setEmail(
+                                request.getEmail());
+
+                User savedUser = userRepository.save(user);
+
+                return toResponse(savedUser);
+        }
+
+        public UserResponseDTO updateStatus(
+                        Long id,
+                        UpdateStatusRequestDTO request) {
+
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found"));
+
+                Authentication authentication = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication();
+
+                String currentUsername = authentication.getName();
+
+                /*
+                 * Prevent administrator from disabling
+                 * their own account.
+                 */
+                if (user.getUsername()
+                                .equals(currentUsername)
+                                && !request.getEnabled()) {
+
+                        throw new IllegalStateException(
+                                        "You cannot disable your own account");
+                }
+
+                user.setEnabled(
+                                request.getEnabled());
+
+                User savedUser = userRepository.save(user);
+
+                return toResponse(savedUser);
+        }
+
+        public void updatePassword(
+                        Long id,
+                        UpdatePasswordRequestDTO request) {
+
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found"));
+
+                user.setPassword(
+                                passwordEncoder.encode(
+                                                request.getPassword()));
+
+                userRepository.save(user);
+        }
+
+        public void deleteUser(Long id) {
+
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found"));
+
+                Authentication authentication = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication();
+
+                String currentUsername = authentication.getName();
+
+                if (user.getUsername()
+                                .equals(currentUsername)) {
+
+                        throw new IllegalStateException(
+                                        "You cannot delete your own account");
+                }
+
+                userRepository.delete(user);
+        }
+
+        private UserResponseDTO toResponse(
+                        User user) {
+
+                return new UserResponseDTO(
+                                user.getId(),
+                                user.getUsername(),
+                                user.getEmail(),
+                                user.getRole(),
+                                user.getEnabled(),
+                                user.getCreatedAt());
+        }
+
+        
 
 }

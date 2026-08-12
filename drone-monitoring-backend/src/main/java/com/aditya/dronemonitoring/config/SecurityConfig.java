@@ -106,21 +106,15 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
 
                                                 .requestMatchers(
-
-                                                                "/api/auth/**",
-
+                                                                "/api/auth/login",
+                                                                "/api/auth/register",
+                                                                "/api/auth/refresh",
                                                                 "/api/reports/**",
-
                                                                 "/swagger-ui/**",
-
                                                                 "/swagger-ui.html",
-
-                                                                "/v3/api-docs/**",
-
-                                                                "/ws/**"
-
-                                                ).permitAll()
-
+                                                                "/v3/api-docs/**")
+                                                .permitAll()
+                                                
                                                 .anyRequest().authenticated())
 
                                 .formLogin(form -> form.disable());

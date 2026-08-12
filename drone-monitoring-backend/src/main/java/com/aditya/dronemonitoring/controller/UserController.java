@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.aditya.dronemonitoring.dto.UpdatePasswordRequestDTO;
+import com.aditya.dronemonitoring.dto.UpdateStatusRequestDTO;
+import com.aditya.dronemonitoring.dto.UpdateUserRequestDTO;
 import com.aditya.dronemonitoring.dto.CreateUserRequestDTO;
 import com.aditya.dronemonitoring.dto.UpdateRoleRequestDTO;
 import com.aditya.dronemonitoring.dto.UserResponseDTO;
@@ -98,6 +101,70 @@ public class UserController {
 
                 );
 
+        }
+
+        @PutMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<UserResponseDTO> updateUser(
+
+                        @PathVariable Long id,
+
+                        @Valid @RequestBody UpdateUserRequestDTO request
+
+        ) {
+
+                return ResponseEntity.ok(
+                                userService.updateUser(
+                                                id,
+                                                request));
+        }
+
+        @PutMapping("/{id}/status")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<UserResponseDTO> updateStatus(
+
+                        @PathVariable Long id,
+
+                        @Valid @RequestBody UpdateStatusRequestDTO request
+
+        ) {
+
+                return ResponseEntity.ok(
+                                userService.updateStatus(
+                                                id,
+                                                request));
+        }
+
+        @PutMapping("/{id}/password")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<Void> updatePassword(
+
+                        @PathVariable Long id,
+
+                        @Valid @RequestBody UpdatePasswordRequestDTO request
+
+        ) {
+
+                userService.updatePassword(
+                                id,
+                                request);
+
+                return ResponseEntity.noContent()
+                                .build();
+        }
+
+        @DeleteMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<Void> deleteUser(
+
+                        @PathVariable Long id
+
+        ) {
+
+                userService.deleteUser(id);
+
+                return ResponseEntity.noContent()
+                                .build();
         }
 
 }

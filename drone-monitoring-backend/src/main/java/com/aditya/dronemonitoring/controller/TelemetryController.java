@@ -1,6 +1,7 @@
 package com.aditya.dronemonitoring.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.aditya.dronemonitoring.telemetry.TelemetryManager;
@@ -18,6 +19,7 @@ public class TelemetryController {
         }
 
         @PostMapping("/start")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<String> start() {
 
                 manager.start();
@@ -27,6 +29,7 @@ public class TelemetryController {
         }
 
         @PostMapping("/stop")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<String> stop() {
 
                 manager.stop();
@@ -36,6 +39,7 @@ public class TelemetryController {
         }
 
         @PostMapping("/mode/fleet")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<String> fleetMode() {
 
                 manager.switchToSimulator();
@@ -60,6 +64,7 @@ public class TelemetryController {
         }
 
         @PostMapping("/mode/real")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<String> realMode() {
 
                 manager.switchToReal();

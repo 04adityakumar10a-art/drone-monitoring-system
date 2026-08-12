@@ -20,36 +20,36 @@ public class RefreshTokenService {
     }
 
     @Transactional
-public RefreshToken createRefreshToken(User user) {
+    public RefreshToken createRefreshToken(User user) {
 
-    System.out.println("========== REFRESH TOKEN DEBUG ==========");
-    System.out.println("User ID: " + user.getId());
+        System.out.println("========== REFRESH TOKEN DEBUG ==========");
+        System.out.println("User ID: " + user.getId());
 
-    var existing = refreshTokenRepository.findByUser_Id(user.getId());
+        var existing = refreshTokenRepository.findByUser_Id(user.getId());
 
-    System.out.println("Token found? " + existing.isPresent());
+        System.out.println("Token found? " + existing.isPresent());
 
-    existing.ifPresent(token -> {
-        System.out.println("Deleting token: " + token.getToken());
-        refreshTokenRepository.delete(token);
-    });
+        existing.ifPresent(token -> {
+            System.out.println("Deleting token: " + token.getToken());
+            refreshTokenRepository.delete(token);
+        });
 
-    System.out.println("Count after delete: " + refreshTokenRepository.count());
+        System.out.println("Count after delete: " + refreshTokenRepository.count());
 
-    RefreshToken refreshToken = new RefreshToken();
+        RefreshToken refreshToken = new RefreshToken();
 
-    refreshToken.setUser(user);
-    refreshToken.setToken(UUID.randomUUID().toString());
-    refreshToken.setExpiryDate(
-            Instant.now().plusSeconds(7 * 24 * 60 * 60));
+        refreshToken.setUser(user);
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(
+                Instant.now().plusSeconds(7 * 24 * 60 * 60));
 
-    RefreshToken saved = refreshTokenRepository.save(refreshToken);
+        RefreshToken saved = refreshTokenRepository.save(refreshToken);
 
-    System.out.println("New token saved: " + saved.getToken());
-    System.out.println("========================================");
+        System.out.println("New token saved: " + saved.getToken());
+        System.out.println("========================================");
 
-    return saved;
-}
+        return saved;
+    }
 
     public RefreshToken verifyRefreshToken(String token) {
 
@@ -66,6 +66,23 @@ public RefreshToken createRefreshToken(User user) {
 
         return refreshToken;
     }
+
+    @Transactional
+    public void revokeRefreshToken(String token) {
+
+        refreshTokenRepository
+                .findByToken(token)
+                .ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Transactional
+public void deleteByUserId(Long userId) {
+
+    refreshTokenRepository
+            .findByUser_Id(userId)
+            .ifPresent(refreshToken ->
+                    refreshTokenRepository.delete(refreshToken));
+}
 
     // public void deleteByUserId(Long userId) {
 

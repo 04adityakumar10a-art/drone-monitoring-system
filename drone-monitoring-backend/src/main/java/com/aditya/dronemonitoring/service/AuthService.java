@@ -5,9 +5,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
+import org.springframework.security.core.Authentication;
+import com.aditya.dronemonitoring.dto.ChangePasswordRequestDTO;
+import com.aditya.dronemonitoring.exception.InvalidPasswordException;
 import com.aditya.dronemonitoring.dto.LoginRequestDTO;
 import com.aditya.dronemonitoring.dto.LoginResponseDTO;
+import com.aditya.dronemonitoring.dto.RefreshTokenRequestDTO;
+import com.aditya.dronemonitoring.dto.RefreshTokenResponseDTO;
 import com.aditya.dronemonitoring.dto.RegisterRequestDTO;
 import com.aditya.dronemonitoring.dto.RegisterResponseDTO;
 import com.aditya.dronemonitoring.entity.Role;
@@ -22,89 +26,149 @@ import com.aditya.dronemonitoring.entity.RefreshToken;
 
 @Service
 public class AuthService {
-    private final RefreshTokenService refreshTokenService;
+        private final RefreshTokenService refreshTokenService;
 
-    private final AuthenticationManager authenticationManager;
+        private final AuthenticationManager authenticationManager;
 
-    private final UserRepository userRepository;
+        private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+        private final BCryptPasswordEncoder passwordEncoder;
 
-    private final JwtService jwtService;
+        private final JwtService jwtService;
 
-    public AuthService(
-            AuthenticationManager authenticationManager,
-            JwtService jwtService,
-            UserRepository userRepository,
-            RefreshTokenService refreshTokenService) {
+        public AuthService(
+                        AuthenticationManager authenticationManager,
+                        JwtService jwtService,
+                        UserRepository userRepository,
+                        RefreshTokenService refreshTokenService) {
 
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-        this.refreshTokenService = refreshTokenService;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
-
-    public RegisterResponseDTO registerUser(RegisterRequestDTO request) {
-
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new UsernameAlreadyExistsException(
-                    "Username already exists");
+                this.authenticationManager = authenticationManager;
+                this.jwtService = jwtService;
+                this.userRepository = userRepository;
+                this.refreshTokenService = refreshTokenService;
+                this.passwordEncoder = new BCryptPasswordEncoder();
         }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyExistsException(
-                    "Email already exists");
+        public RegisterResponseDTO registerUser(RegisterRequestDTO request) {
+
+                if (userRepository.existsByUsername(request.getUsername())) {
+                        throw new UsernameAlreadyExistsException(
+                                        "Username already exists");
+                }
+
+                if (userRepository.existsByEmail(request.getEmail())) {
+                        throw new EmailAlreadyExistsException(
+                                        "Email already exists");
+                }
+
+                User user = UserMapper.toEntity(request);
+
+                user.setPassword(
+                                passwordEncoder.encode(request.getPassword()));
+
+                user.setRole(Role.VIEWER);
+
+                User savedUser = userRepository.save(user);
+
+                return UserMapper.toResponse(savedUser);
         }
 
-        User user = UserMapper.toEntity(request);
+        public LoginResponseDTO login(LoginRequestDTO request) {
 
-        user.setPassword(
-                passwordEncoder.encode(request.getPassword()));
+                Authentication authentication = authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(
+                                                request.getUsername(),
+                                                request.getPassword()));
 
-        user.setRole(Role.VIEWER);
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                User user = userDetails.getUser();
+                LoginResponseDTO response = new LoginResponseDTO();
 
-        User savedUser = userRepository.save(user);
+                response.setUserId(user.getId());
+                response.setUsername(user.getUsername());
+                response.setRole(user.getRole());
 
-        return UserMapper.toResponse(savedUser);
-    }
+                String token = jwtService.generateToken(userDetails);
 
-    public LoginResponseDTO login(LoginRequestDTO request) {
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-        System.out.println("Inside AuthService");
+                response.setToken(token);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()));
+                response.setRefreshToken(
+                                refreshToken.getToken());
 
-        System.out.println("Authentication Successful");
+                response.setTokenType("Bearer");
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        User user = userDetails.getUser();
-        LoginResponseDTO response = new LoginResponseDTO();
+                response.setExpiresIn(jwtService.getJwtExpiration() / 1000);
 
-        response.setUserId(user.getId());
-        response.setUsername(user.getUsername());
-        response.setRole(user.getRole());
+                return response;
+        }
 
-        String token = jwtService.generateToken(userDetails);
+        public RefreshTokenResponseDTO refreshAccessToken(
+                        RefreshTokenRequestDTO request) {
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+                RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(
+                                request.getRefreshToken());
 
-        System.out.println(jwtService.extractUsername(token));
+                User user = refreshToken.getUser();
 
-        System.out.println(jwtService.isTokenValid(token));
+                CustomUserDetails userDetails = new CustomUserDetails(user);
 
-        response.setToken(token);
+                String newAccessToken = jwtService.generateToken(userDetails);
 
-        response.setRefreshToken(
-                refreshToken.getToken());
+                return new RefreshTokenResponseDTO(
+                                newAccessToken,
+                                "Bearer",
+                                jwtService.getJwtExpiration() / 1000);
+        }
 
-        response.setTokenType("Bearer");
+        public void logout(String refreshToken) {
 
-        response.setExpiresIn(900L); // 15 minutes
+                refreshTokenService.revokeRefreshToken(refreshToken);
+        }
 
-        return response;
-    }
+        public void changePassword(
+                        Authentication authentication,
+                        ChangePasswordRequestDTO request) {
+
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+                User user = userDetails.getUser();
+
+                // 1. Verify current password
+                if (!passwordEncoder.matches(
+                                request.getCurrentPassword(),
+                                user.getPassword())) {
+
+                        throw new InvalidPasswordException(
+                                        "Current password is incorrect");
+                }
+
+                // 2. Verify new password confirmation
+                if (!request.getNewPassword().equals(
+                                request.getConfirmPassword())) {
+
+                        throw new InvalidPasswordException(
+                                        "New password and confirm password do not match");
+                }
+
+                // 3. Prevent using the same password
+                if (passwordEncoder.matches(
+                                request.getNewPassword(),
+                                user.getPassword())) {
+
+                        throw new InvalidPasswordException(
+                                        "New password must be different from current password");
+                }
+
+                // 4. Hash new password
+                user.setPassword(
+                                passwordEncoder.encode(
+                                                request.getNewPassword()));
+
+                // 5. Save
+                userRepository.save(user);
+
+                refreshTokenService.deleteByUserId(user.getId());
+        }
 }

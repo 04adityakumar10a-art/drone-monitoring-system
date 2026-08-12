@@ -13,129 +13,129 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ReportController {
 
-    private final ReportService reportService;
+        private final ReportService reportService;
 
-    @GetMapping("/fleet/csv")
-    public ResponseEntity<ByteArrayResource> fleetCsv() {
+        @GetMapping("/fleet/csv")
+        public ResponseEntity<ByteArrayResource> fleetCsv() {
 
-        return build(
+                return build(
 
-                reportService.exportFleetCsv(),
+                                reportService.exportFleetCsv(),
 
-                "fleet_report.csv",
+                                "fleet_report.csv",
 
-                "text/csv"
+                                "text/csv"
 
-        );
+                );
 
-    }
+        }
 
-    @GetMapping("/fleet/excel")
-    public ResponseEntity<ByteArrayResource> fleetExcel() {
+        @GetMapping("/fleet/excel")
+        public ResponseEntity<ByteArrayResource> fleetExcel() {
 
-        return build(
+                return build(
 
-                reportService.exportFleetExcel(),
+                                reportService.exportFleetExcel(),
 
-                "fleet_report.xlsx",
+                                "fleet_report.xlsx",
 
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-        );
+                );
 
-    }
+        }
 
-    @GetMapping("/fleet/pdf")
-    public ResponseEntity<ByteArrayResource> fleetPdf() {
+        @GetMapping("/fleet/pdf")
+        public ResponseEntity<ByteArrayResource> fleetPdf() {
 
-        return build(
+                return build(
 
-                reportService.exportFleetPdf(),
+                                reportService.exportFleetPdf(),
 
-                "fleet_report.pdf",
+                                "fleet_report.pdf",
 
-                "application/pdf"
+                                "application/pdf"
 
-        );
+                );
 
-    }
+        }
 
-    @GetMapping("/drone/{id}/csv")
-    public ResponseEntity<ByteArrayResource> droneCsv(
-            @PathVariable Long id) {
+        @GetMapping("/drone/{id}/csv")
+        public ResponseEntity<ByteArrayResource> droneCsv(
+                        @PathVariable Long id) {
 
-        return build(
+                return build(
 
-                reportService.exportDroneCsv(id),
+                                reportService.exportDroneCsv(id),
 
-                "drone_" + id + ".csv",
+                                "drone_" + id + ".csv",
 
-                "text/csv"
+                                "text/csv"
 
-        );
+                );
 
-    }
+        }
 
-    @GetMapping("/drone/{id}/excel")
-    public ResponseEntity<ByteArrayResource> droneExcel(
-            @PathVariable Long id) {
+        @GetMapping("/drone/{id}/excel")
+        public ResponseEntity<ByteArrayResource> droneExcel(
+                        @PathVariable Long id) {
 
-        return build(
+                return build(
 
-                reportService.exportDroneExcel(id),
+                                reportService.exportDroneExcel(id),
 
-                "drone_" + id + ".xlsx",
+                                "drone_" + id + ".xlsx",
 
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-        );
+                );
 
-    }
+        }
 
-    @GetMapping("/drone/{id}/pdf")
-    public ResponseEntity<ByteArrayResource> dronePdf(
-            @PathVariable Long id) {
+        @GetMapping("/drone/{id}/pdf")
+        public ResponseEntity<ByteArrayResource> dronePdf(
+                        @PathVariable Long id) {
 
-        return build(
+                return build(
 
-                reportService.exportDronePdf(id),
+                                reportService.exportDronePdf(id),
 
-                "drone_" + id + ".pdf",
+                                "drone_" + id + ".pdf",
 
-                "application/pdf"
+                                "application/pdf"
 
-        );
+                );
 
-    }
+        }
 
-    private ResponseEntity<ByteArrayResource> build(
+        private ResponseEntity<ByteArrayResource> build(
 
-            byte[] data,
+                        byte[] data,
 
-            String filename,
+                        String filename,
 
-            String type
+                        String type
 
-    ) {
+        ) {
 
-        ByteArrayResource resource = new ByteArrayResource(data);
+                ByteArrayResource resource = new ByteArrayResource(data);
 
-        return ResponseEntity.ok()
+                return ResponseEntity.ok()
 
-                .header(
+                                .header(
 
-                        HttpHeaders.CONTENT_DISPOSITION,
+                                                HttpHeaders.CONTENT_DISPOSITION,
 
-                        "attachment; filename=" + filename
+                                                "attachment; filename=" + filename
 
-                )
+                                )
 
-                .contentType(MediaType.parseMediaType(type))
+                                .contentType(MediaType.parseMediaType(type))
 
-                .contentLength(data.length)
+                                .contentLength(data.length)
 
-                .body(resource);
+                                .body(resource);
 
-    }
+        }
 
 }
