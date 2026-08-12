@@ -6,16 +6,48 @@ import {
     ShieldCheck,
     ShieldAlert,
     CloudRain,
-    Loader2
+    Loader2,
+    MapPin
 } from "lucide-react";
 
+import { motion } from "motion/react";
+
+import GlassPanel from "../../../ui/Panel/GlassPanel";
 import useWeather from "../../../hooks/useWeather";
 
-function Row({ icon, label, value }) {
+function Row({
+
+    icon,
+
+    label,
+
+    value
+
+}) {
 
     return (
 
-        <div className="flex items-center justify-between">
+        <motion.div
+
+            whileHover={{
+
+                x:4
+
+            }}
+
+            className="
+            flex
+            items-center
+            justify-between
+            rounded-xl
+            border
+            border-white/5
+            bg-white/[0.03]
+            px-4
+            py-3
+            "
+
+        >
 
             <div className="flex items-center gap-3">
 
@@ -29,19 +61,23 @@ function Row({ icon, label, value }) {
 
             </div>
 
-            <span className="font-semibold text-white">
+            <span className="font-semibold">
 
                 {value}
 
             </span>
 
-        </div>
+        </motion.div>
 
     );
 
 }
 
-function WeatherWidget({ drone }) {
+function WeatherWidget({
+
+    drone
+
+}) {
 
     const {
 
@@ -63,24 +99,33 @@ function WeatherWidget({ drone }) {
 
         return (
 
-            <div className="rounded-2xl border border-[#262626] bg-[#1A1A1A] p-5">
+            <GlassPanel
 
-                <div className="flex items-center justify-center gap-3 py-8">
+                glow
+
+                className="p-6"
+
+            >
+
+                <div className="flex flex-col items-center gap-4 py-6">
 
                     <Loader2
-                        size={22}
+
+                        size={28}
+
                         className="animate-spin text-cyan-400"
+
                     />
 
-                    <span className="text-gray-400">
+                    <p className="text-gray-400">
 
-                        Loading Weather...
+                        Fetching live weather...
 
-                    </span>
+                    </p>
 
                 </div>
 
-            </div>
+            </GlassPanel>
 
         );
 
@@ -90,15 +135,25 @@ function WeatherWidget({ drone }) {
 
         return (
 
-            <div className="rounded-2xl border border-[#262626] bg-[#1A1A1A] p-5">
+            <GlassPanel
 
-                <p className="text-center text-gray-400">
+                glow
 
-                    Unable to load weather.
+                className="p-6"
 
-                </p>
+            >
 
-            </div>
+                <div className="text-center">
+
+                    <p className="text-gray-400">
+
+                        Unable to load weather.
+
+                    </p>
+
+                </div>
+
+            </GlassPanel>
 
         );
 
@@ -106,82 +161,207 @@ function WeatherWidget({ drone }) {
 
     return (
 
-        <div className="rounded-2xl border border-[#262626] bg-[#1A1A1A] p-5">
+        <GlassPanel
 
-            <div className="mb-5 flex items-center justify-between">
+            glow
 
-                <div className="flex items-center gap-3">
+            className="relative overflow-hidden p-5"
 
-                    <Sun
-                        className="text-yellow-400"
-                        size={28}
-                    />
+        >
+
+            {/* Ambient Glow */}
+
+            <motion.div
+
+                animate={{
+
+                    opacity:[0.05,0.12,0.05]
+
+                }}
+
+                transition={{
+
+                    repeat:Infinity,
+
+                    duration:5
+
+                }}
+
+                className="absolute inset-0"
+
+                style={{
+
+                    background:
+
+                    "radial-gradient(circle at top right, rgba(250,204,21,.08), transparent 70%)"
+
+                }}
+
+            />
+
+            {/* Header */}
+
+            <div className="relative z-10 flex items-center justify-between">
+
+                <div className="flex items-center gap-4">
+
+                    <motion.div
+
+                        animate={{
+
+                            rotate:[0,8,0,-8,0]
+
+                        }}
+
+                        transition={{
+
+                            repeat:Infinity,
+
+                            duration:8
+
+                        }}
+
+                    >
+
+                        <Sun
+
+                            size={30}
+
+                            className="text-yellow-400"
+
+                        />
+
+                    </motion.div>
 
                     <div>
 
-                        <h2 className="font-bold text-white">
+                        <p className="text-[11px] uppercase tracking-[0.28em] text-gray-500">
+
+                            Environment
+
+                        </p>
+
+                        <h3 className="mt-1 text-lg font-semibold">
 
                             Weather
 
-                        </h2>
-
-                        <p className="text-sm text-gray-500">
-
-                            {weather.weather}
-
-                        </p>
+                        </h3>
 
                     </div>
 
                 </div>
 
                 <div
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        weather.flightStatus === "SAFE"
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-red-500/20 text-red-400"
-                    }`}
-                >
 
-                    {weather.flightStatus === "SAFE"
+                    className={`
+                    flex
+                    items-center
+                    gap-2
+                    rounded-full
+                    px-3
+                    py-1.5
+                    text-xs
+                    font-semibold
 
-                        ? <div className="flex items-center gap-1">
+                    ${
+                        weather.flightStatus==="SAFE"
 
-                            <ShieldCheck size={14}/>
+                        ?
 
-                            SAFE
+                        "bg-green-500/15 text-green-400"
 
-                        </div>
+                        :
 
-                        : <div className="flex items-center gap-1">
-
-                            <ShieldAlert size={14}/>
-
-                            {weather.flightStatus}
-
-                        </div>
+                        "bg-red-500/15 text-red-400"
 
                     }
+                    `}
+
+                >
+
+                    {
+
+                        weather.flightStatus==="SAFE"
+
+                        ?
+
+                        <ShieldCheck size={15}/>
+
+                        :
+
+                        <ShieldAlert size={15}/>
+
+                    }
+
+                    {weather.flightStatus}
 
                 </div>
 
             </div>
 
-            <div className="space-y-4">
+            {/* Temperature */}
 
-                <Row
+            <div className="mt-6 flex items-end justify-between">
 
-                    icon={<Sun size={18} className="text-yellow-400"/>}
+                <div>
 
-                    label="Temperature"
+                    <motion.div
 
-                    value={`${weather.temperature} °C`}
+                        key={weather.temperature}
+
+                        initial={{
+
+                            scale:.9,
+
+                            opacity:0
+
+                        }}
+
+                        animate={{
+
+                            scale:1,
+
+                            opacity:1
+
+                        }}
+
+                        className="text-5xl font-bold"
+
+                    >
+
+                        {weather.temperature}°
+
+                    </motion.div>
+
+                    <p className="mt-1 text-gray-500">
+
+                        {weather.weather}
+
+                    </p>
+
+                </div>
+
+                <MapPin
+
+                    className="text-cyan-400"
+
+                    size={24}
 
                 />
 
+            </div>
+
+            {/* Divider */}
+
+            <div className="my-6 h-px bg-white/5"/>
+
+            {/* Details */}
+
+            <div className="space-y-3">
+
                 <Row
 
-                    icon={<Wind size={18} className="text-blue-400"/>}
+                    icon={<Wind className="text-sky-400" size={18}/>}
 
                     label="Wind"
 
@@ -191,7 +371,7 @@ function WeatherWidget({ drone }) {
 
                 <Row
 
-                    icon={<Droplets size={18} className="text-cyan-400"/>}
+                    icon={<Droplets className="text-cyan-400" size={18}/>}
 
                     label="Humidity"
 
@@ -201,7 +381,7 @@ function WeatherWidget({ drone }) {
 
                 <Row
 
-                    icon={<Eye size={18} className="text-green-400"/>}
+                    icon={<Eye className="text-green-400" size={18}/>}
 
                     label="Visibility"
 
@@ -211,7 +391,7 @@ function WeatherWidget({ drone }) {
 
                 <Row
 
-                    icon={<CloudRain size={18} className="text-indigo-400"/>}
+                    icon={<CloudRain className="text-indigo-400" size={18}/>}
 
                     label="Condition"
 
@@ -221,7 +401,7 @@ function WeatherWidget({ drone }) {
 
             </div>
 
-        </div>
+        </GlassPanel>
 
     );
 

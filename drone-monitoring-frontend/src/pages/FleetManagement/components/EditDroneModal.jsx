@@ -110,7 +110,7 @@ function EditDroneModal({
 
                     <div className="flex items-center gap-3">
 
-                        <Plane className="text-[#D4AF37]" />
+                        <Plane className="text-[var(--aerion-primary)]" />
 
                         <h2 className="text-2xl font-bold text-white">
 

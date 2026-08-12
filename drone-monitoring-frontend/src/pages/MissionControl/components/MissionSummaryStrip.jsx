@@ -11,7 +11,7 @@ function Stat({ icon, title, value }) {
 
         <div className="flex items-center gap-3 rounded-xl border border-[#232323] bg-[#111111] px-5 py-3">
 
-            <div className="text-[#D4AF37]">
+            <div className="text-[var(--aerion-primary)]">
 
                 {icon}
 

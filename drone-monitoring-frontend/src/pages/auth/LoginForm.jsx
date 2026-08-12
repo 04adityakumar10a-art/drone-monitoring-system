@@ -113,7 +113,7 @@ function LoginForm() {
 
                     type="button"
 
-                    className="text-sm text-[#D4AF37]"
+                    className="text-sm text-[var(--aerion-primary)]rion-primary)]"
 
                 >
 

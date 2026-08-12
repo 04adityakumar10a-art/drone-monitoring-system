@@ -17,7 +17,7 @@ function AnalyticsChartCard({
 
                     <div>
 
-                        <p className="text-xs uppercase tracking-[0.35em] text-[#D4AF37]">
+                        <p className="text-xs uppercase tracking-[0.35em] text-[var(--aerion-primary)]">
 
                             {title}
 
@@ -37,7 +37,7 @@ function AnalyticsChartCard({
 
                     </div>
 
-                    <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#171717] p-4 text-[#D4AF37]">
+                    <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#171717] p-4 text-[var(--aerion-primary)]">
 
                         {icon}
 

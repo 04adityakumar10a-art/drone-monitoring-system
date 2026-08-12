@@ -65,11 +65,11 @@ function FleetHealthCard({ stats }) {
 
                 </div>
 
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#D4AF37]/20 bg-[#D4AF37]/10">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#D4AF37]/20 bg-[var(--aerion-primary-soft)]">
 
                     <ShieldCheck
                         size={30}
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                 </div>
@@ -147,7 +147,7 @@ function FleetHealthCard({ stats }) {
 
                         </h1>
 
-                        <span className="text-[#D4AF37] font-semibold">
+                        <span className="text-[var(--aerion-primary)] font-semibold">
 
                             %
 
@@ -197,7 +197,7 @@ function FleetHealthCard({ stats }) {
 
                     icon={<Wifi size={22} />}
 
-                    color="text-[#D4AF37]"
+                    color="text-[var(--aerion-primary)]"
 
                     title="Telemetry"
 
@@ -227,7 +227,7 @@ function FleetHealthCard({ stats }) {
 
                 </div>
 
-                <div className="flex items-center gap-2 text-[#D4AF37]">
+                <div className="flex items-center gap-2 text-[var(--aerion-primary)]">
 
                     <Activity size={18} />
 

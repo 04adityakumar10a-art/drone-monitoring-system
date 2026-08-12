@@ -19,7 +19,7 @@ function Item({
 
         <div className="rounded-xl border border-[#262626] bg-[#111111] p-5 text-center">
 
-            <div className="mb-3 flex justify-center text-[#D4AF37]">
+            <div className="mb-3 flex justify-center text-[var(--aerion-primary)]">
 
                 {icon}
 

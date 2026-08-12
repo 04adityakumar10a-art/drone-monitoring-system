@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { motion } from "motion/react";
+import { Plane, Inbox } from "lucide-react";
 import api from "../api/axios";
 
 import useDroneStatus from "../hooks/useDroneStatus";
@@ -335,53 +337,110 @@ function DroneList() {
 
             {loading ? (
 
-                <div className="bg-slate-800 rounded-xl p-12 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="
+                        relative
+                        overflow-hidden
+                        rounded-[28px]
+                        border
+                        border-white/[0.08]
+                        border-t-white/[0.18]
+                        bg-white/[0.03]
+                        p-14
+                        text-center
+                        backdrop-blur-xl
+                    "
+                >
+                    <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#F0C24B]/[0.08] blur-[110px]" />
 
-                    <div className="text-6xl animate-pulse">
+                    <motion.div
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+                        className="
+                            relative
+                            z-10
+                            mx-auto
+                            flex
+                            h-16
+                            w-16
+                            items-center
+                            justify-center
+                            rounded-3xl
+                            border
+                            border-[#F0C24B]/25
+                            bg-gradient-to-br
+                            from-[#F0C24B]/[0.16]
+                            to-[#F0C24B]/[0.02]
+                            shadow-[0_0_30px_rgba(240,194,75,.15)]
+                        "
+                    >
+                        <Plane size={28} className="text-[var(--aerion-primary)]" />
+                    </motion.div>
 
-                        🚁
-
-                    </div>
-
-                    <h2 className="text-2xl text-white mt-4">
-
-                        Loading drones...
-
+                    <h2 className="relative z-10 mt-6 text-xl font-semibold text-white">
+                        Loading fleet...
                     </h2>
 
-                </div>
+                    <p className="relative z-10 mt-2 text-sm text-gray-500">
+                        Pulling the latest telemetry from the registry.
+                    </p>
+                </motion.div>
 
             ) : filteredDrones.length === 0 ? (
 
-                <div className="bg-slate-800 rounded-xl p-12 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="
+                        relative
+                        overflow-hidden
+                        rounded-[28px]
+                        border
+                        border-white/[0.08]
+                        border-t-white/[0.18]
+                        bg-white/[0.03]
+                        p-14
+                        text-center
+                        backdrop-blur-xl
+                    "
+                >
+                    <div className="pointer-events-none absolute -left-24 -bottom-24 h-64 w-64 rounded-full bg-[#8B6BD8]/[0.06] blur-[110px]" />
 
-                    <div className="text-6xl">
-
-                        📭
-
+                    <div
+                        className="
+                            relative
+                            z-10
+                            mx-auto
+                            flex
+                            h-16
+                            w-16
+                            items-center
+                            justify-center
+                            rounded-3xl
+                            border
+                            border-white/[0.1]
+                            bg-white/[0.04]
+                        "
+                    >
+                        <Inbox size={28} className="text-gray-500" />
                     </div>
 
-                    <h2 className="text-2xl text-white mt-4">
-
+                    <h2 className="relative z-10 mt-6 text-xl font-semibold text-white">
                         No Drones Found
-
                     </h2>
 
-                    <p className="text-gray-400 mt-3">
-
-                        Click
-
-                        <span className="font-semibold text-cyan-400">
-
-                            {" "}Add Drone{" "}
-
-                        </span>
-
+                    <p className="relative z-10 mt-2 text-sm text-gray-500">
+                        Click{" "}
+                        <span className="font-semibold text-[var(--aerion-primary)]">
+                            Add Drone
+                        </span>{" "}
                         to create your first drone.
-
                     </p>
-
-                </div>
+                </motion.div>
 
             ) : (
 

@@ -70,7 +70,7 @@ function ConnectionStatus() {
 
             <Status
 
-                icon={<Satellite size={18} className="text-[#D4AF37]" />}
+                icon={<Satellite size={18} className="text-[var(--aerion-primary)]" />}
 
                 label="GPS"
 

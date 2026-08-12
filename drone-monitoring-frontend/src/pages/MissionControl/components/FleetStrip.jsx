@@ -1,125 +1,250 @@
-import {
-    Plane,
-    Battery,
-    Radio,
-    MoveUp,
-    Gauge
-} from "lucide-react";
+import { motion } from "motion/react";
+import { useMemo, useState } from "react";
+
+import FleetHeader from "./FleetHeader";
+import FleetCard from "./FleetCard";
+
+import { fadeUp } from "../../../animations";
 
 function FleetStrip({
 
     drones,
+
     selectedDrone,
+
     onSelectDrone
 
 }) {
 
+    const [collapsed, setCollapsed] = useState(false);
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const [sortBy, setSortBy] = useState("NAME");
+
+    const filteredDrones = useMemo(() => {
+
+        let list = drones.filter((drone) => {
+
+            if (!searchQuery.trim()) {
+
+                return true;
+
+            }
+
+            const query = searchQuery.toLowerCase();
+
+            return (
+
+                drone.name?.toLowerCase().includes(query) ||
+
+                drone.serialNumber?.toLowerCase().includes(query) ||
+
+                drone.status?.toLowerCase().includes(query)
+
+            );
+
+        });
+
+        switch (sortBy) {
+
+            case "BATTERY":
+
+                list.sort(
+
+                    (a, b) => (b.battery ?? 0) - (a.battery ?? 0)
+
+                );
+
+                break;
+
+            case "SIGNAL":
+
+                list.sort(
+
+                    (a, b) => (b.signal ?? 0) - (a.signal ?? 0)
+
+                );
+
+                break;
+
+            case "ALTITUDE":
+
+                list.sort(
+
+                    (a, b) => (b.altitude ?? 0) - (a.altitude ?? 0)
+
+                );
+
+                break;
+
+            case "SPEED":
+
+                list.sort(
+
+                    (a, b) => (b.speed ?? 0) - (a.speed ?? 0)
+
+                );
+
+                break;
+
+            default:
+
+                list.sort((a, b) =>
+
+                    (a.serialNumber ?? "").localeCompare(
+
+                        b.serialNumber ?? ""
+
+                    )
+
+                );
+
+        }
+
+        return list;
+
+    }, [
+
+        drones,
+
+        searchQuery,
+
+        sortBy
+
+    ]);
+
     return (
 
-        <div className="border-b border-[#232323] bg-[#0B0B0B]">
+        <motion.section
 
-            <div className="flex gap-3 overflow-x-auto px-5 py-3">
+            {...fadeUp}
 
-                {drones.map((drone) => (
+            className="border-b border-white/5 bg-[#090909]"
 
-                    <button
+        >
 
-                        key={drone.id}
+            <div className="px-6 pt-5">
 
-                        onClick={() => onSelectDrone(drone)}
+                <FleetHeader
 
-                        className={`
-                            min-w-[240px]
-                            rounded-xl
-                            border
-                            p-3
-                            transition-all
+                    drones={drones}
 
-                            ${
-                                selectedDrone?.id === drone.id
-                                    ? "border-cyan-400 bg-cyan-500/10"
-                                    : "border-[#262626] bg-[#131313] hover:border-cyan-500"
-                            }
-                        `}
+                    collapsed={collapsed}
+
+                    onToggle={() =>
+
+                        setCollapsed(previous => !previous)
+
+                    }
+
+                    searchQuery={searchQuery}
+
+                    onSearchChange={setSearchQuery}
+
+                    sortBy={sortBy}
+
+                    onSortChange={setSortBy}
+
+                />
+
+                <motion.div
+
+                    initial={false}
+
+                    animate={{
+
+                        height: collapsed ? 0 : "auto",
+
+                        opacity: collapsed ? 0 : 1,
+
+                        marginTop: collapsed ? 0 : 8
+
+                    }}
+
+                    transition={{
+
+                        duration: 0.35,
+
+                        ease: "easeInOut"
+
+                    }}
+
+                    className="overflow-hidden"
+
+                >
+
+                    <div
+
+                        className="
+                        flex
+                        gap-4
+                        overflow-x-auto
+                        pb-5
+                        snap-x
+                        snap-mandatory
+                        scrollbar-hide
+                        "
 
                     >
 
-                        <div className="mb-3 flex items-center justify-between">
+                        {
 
-                            <div className="flex items-center gap-2">
+                            filteredDrones.length > 0
 
-                                <Plane
-                                    size={18}
-                                    className="text-cyan-400"
-                                />
+                                ? (
 
-                                <span className="font-semibold text-white">
+                                    filteredDrones.map((drone) => (
 
-                                    {drone.serialNumber}
+                                        <FleetCard
 
-                                </span>
+                                            key={drone.id}
 
-                            </div>
+                                            drone={drone}
 
-                            <span className="text-xs text-gray-400">
+                                            selected={selectedDrone?.id === drone.id}
 
-                                {drone.status}
+                                            onClick={() => onSelectDrone(drone)}
 
-                            </span>
+                                        />
 
-                        </div>
+                                    ))
 
-                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                )
 
-                            <Metric
-                                icon={<Battery size={14} />}
-                                value={`${drone.battery ?? 0}%`}
-                            />
+                                : (
 
-                            <Metric
-                                icon={<MoveUp size={14} />}
-                                value={`${drone.altitude ?? 0} m`}
-                            />
+                                    <div className="flex h-36 w-full items-center justify-center rounded-2xl border border-dashed border-white/10">
 
-                            <Metric
-                                icon={<Gauge size={14} />}
-                                value={`${drone.speed ?? 0} m/s`}
-                            />
+                                        <div className="text-center">
 
-                            <Metric
-                                icon={<Radio size={14} />}
-                                value={`${drone.signal ?? 0}%`}
-                            />
+                                            <p className="text-lg font-semibold text-white">
 
-                        </div>
+                                                No drones found
 
-                    </button>
+                                            </p>
 
-                ))}
+                                            <p className="mt-1 text-sm text-gray-500">
 
-            </div>
+                                                Try searching by name, serial number or status.
 
-        </div>
+                                            </p>
 
-    );
+                                        </div>
 
-}
+                                    </div>
 
-function Metric({ icon, value }) {
+                                )
 
-    return (
+                        }
 
-        <div className="flex items-center gap-2 rounded-lg bg-[#1A1A1A] px-2 py-2 text-gray-300">
+                    </div>
 
-            <div className="text-cyan-400">
-
-                {icon}
+                </motion.div>
 
             </div>
 
-            <span>{value}</span>
-
-        </div>
+        </motion.section>
 
     );
 

@@ -163,7 +163,7 @@ function ReplayControls({
 
                         size={18}
 
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
 
                     />
 
@@ -191,7 +191,7 @@ function ReplayControls({
 
                                     speed === rate
 
-                                        ? "border-[#D4AF37] bg-[#1A1A1A] text-[#D4AF37]"
+                                        ? "border-[#D4AF37] bg-[#1A1A1A] text-[var(--aerion-primary)]"
 
                                         : "border-[#262626] bg-[#0D0D0D] text-gray-300 hover:border-[#444]"
 
@@ -225,7 +225,7 @@ function ReplayControls({
 
                     </div>
 
-                    <span className="font-semibold text-[#D4AF37]">
+                    <span className="font-semibold text-[var(--aerion-primary)]">
 
                         {speed}× Speed
 

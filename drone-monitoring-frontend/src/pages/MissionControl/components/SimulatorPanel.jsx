@@ -14,6 +14,12 @@ function SimulatorPanel({ selectedDroneId }) {
 
     const [mode, setMode] = useState("SIMULATOR");
 
+    const role = localStorage.getItem("role");
+
+    if (role === "VIEWER") {
+        return null;
+    }
+
     /* ============================
        SWITCH TO SIMULATOR
     ============================ */
@@ -158,7 +164,7 @@ function SimulatorPanel({ selectedDroneId }) {
 
     return (
 
-        <div className="rounded-2xl border border-[#2c2c2c] bg-[#181818] p-5">
+        <div className="rounded-2xl border border-[var(--aerion-border)] bg-[var(--aerion-elevated)] p-5">
 
             <h2 className="mb-5 text-lg font-semibold text-white">
 

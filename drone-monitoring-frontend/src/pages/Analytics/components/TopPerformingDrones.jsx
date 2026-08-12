@@ -32,7 +32,7 @@ function TopPerformingDrones({ drones }) {
                 <div className="flex items-center gap-3">
 
                     <Trophy
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                         size={24}
                     />
 
@@ -96,7 +96,7 @@ function TopPerformingDrones({ drones }) {
                         </div>
 
                         <ArrowUpRight
-                            className="text-[#D4AF37]"
+                            className="text-[var(--aerion-primary)]"
                         />
 
                     </div>

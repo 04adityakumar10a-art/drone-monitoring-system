@@ -1,238 +1,240 @@
-import {
+import { Radio, Shield, Cpu, PanelLeft } from "lucide-react";
+import { motion } from "motion/react";
 
-    Plane,
-
-    Radio,
-
-    Shield,
-
-    Clock3,
-
-    Circle
-
-} from "lucide-react";
-import { PanelLeft } from "lucide-react";
 import { useSidebar } from "../../../context/SidebarContext";
 
-import { useEffect, useState } from "react";
+import GlassPanel from "../../../ui/Panel/GlassPanel";
+import HeaderButton from "../../../ui/Header/HeaderButton";
+import HeaderInfoCard from "../../../ui/Header/HeaderInfoCard";
+import MissionTitle from "../../../ui/Header/MissionTitle";
+import LiveClock from "../../../ui/Header/LiveClock";
+import StatusChip from "../../../ui/Badge/StatusChip";
 
-function MissionToolbar({
+function MissionToolbar({ selectedDrone }) {
 
-    selectedDrone
-
-}) {
     const { toggleSidebar } = useSidebar();
-    const [time, setTime] = useState("");
-
-    useEffect(() => {
-
-        const update = () => {
-
-            setTime(
-
-                new Date().toLocaleTimeString()
-
-            );
-
-        };
-
-        update();
-
-        const timer = setInterval(update, 1000);
-
-        return () => clearInterval(timer);
-
-    }, []);
 
     return (
 
-        <div className="flex h-16 items-center justify-between border-b border-[#232323] bg-[#0B0B0B] px-6">
+        <motion.header
 
-            <div className="flex items-center gap-5">
-                <button
+            initial={{
+                opacity: 0,
+                y: -30
+            }}
 
-                    onClick={toggleSidebar}
+            animate={{
+                opacity: 1,
+                y: 0
+            }}
 
-                    className="
-        flex
-        h-11
-        w-11
-        items-center
-        justify-center
-        rounded-xl
-        border
-        border-[#262626]
-        bg-[#111111]
-        text-gray-400
-        transition-all
-        duration-300
-        hover:border-[#D4AF37]
-        hover:bg-[#171717]
-        hover:text-[#D4AF37]
-    "
+            transition={{
+                duration: 0.45
+            }}
 
-                >
+            className="relative border-b border-white/[0.08] bg-white/[0.025] backdrop-blur-xl px-6 py-4"
 
-                    <PanelLeft size={20} />
+        >
 
-                </button>
-                <Plane
+            {/* Background Glow */}
 
-                    size={28}
+            <motion.div
 
-                    className="text-cyan-400"
+                animate={{
 
-                />
+                    opacity: [0.06, 0.16, 0.06]
 
-                <div>
+                }}
 
-                    <h1 className="text-xl font-bold">
+                transition={{
 
-                        Mission Control
+                    repeat: Infinity,
 
-                    </h1>
+                    duration: 5
 
-                    <p className="text-xs text-gray-500">
+                }}
 
-                        Ground Control Station
+                className="
+                absolute
+                inset-0
+                pointer-events-none
+                "
 
-                    </p>
+                style={{
 
-                </div>
+                    background:
+                        "radial-gradient(circle at 30% -40%, rgba(240,194,75,.2), transparent 60%), radial-gradient(circle at 75% -40%, rgba(139,107,216,.14), transparent 60%)"
 
-            </div>
-
-            <div className="hidden xl:flex gap-5">
-
-                <InfoCard
-
-                    title="Drone"
-
-                    value={selectedDrone?.serialNumber ?? "--"}
-
-                />
-
-                <InfoCard
-
-                    title="Mission"
-
-                    value="Surveillance"
-
-                />
-
-                <InfoCard
-
-                    title="Status"
-
-                    value={selectedDrone?.status ?? "--"}
-
-                />
-
-            </div>
-
-            <div className="flex items-center gap-3">
-
-                <StatusChip
-
-                    icon={<Radio size={15} />}
-
-                    text="Telemetry"
-
-                    color="text-green-400"
-
-                />
-
-                <StatusChip
-
-                    icon={<Shield size={15} />}
-
-                    text="Secure"
-
-                    color="text-yellow-400"
-
-                />
-
-                <StatusChip
-
-                    icon={<Clock3 size={15} />}
-
-                    text={time}
-
-                    color="text-cyan-400"
-
-                />
-
-            </div>
-
-        </div>
-
-    );
-
-}
-
-function InfoCard({
-
-    title,
-
-    value
-
-}) {
-
-    return (
-
-        <div className="rounded-xl bg-[#141414] px-4 py-2 border border-[#232323]">
-
-            <div className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-
-                {title}
-
-            </div>
-
-            <div className="font-semibold mt-1">
-
-                {value}
-
-            </div>
-
-        </div>
-
-    );
-
-}
-
-function StatusChip({
-
-    icon,
-
-    text,
-
-    color
-
-}) {
-
-    return (
-
-        <div className="flex items-center gap-2 rounded-xl border border-[#232323] bg-[#151515] px-3 py-2">
-
-            <Circle
-
-                size={8}
-
-                fill="currentColor"
-
-                className={color}
+                }}
 
             />
 
-            {icon}
+            <GlassPanel
 
-            <span className="text-sm">
+                hover={false}
 
-                {text}
+                glow
 
-            </span>
+                className="relative overflow-hidden px-6 py-5"
 
-        </div>
+            >
+
+                {/* Gold Accent */}
+
+                <motion.div
+
+                    animate={{
+
+                        opacity: [0.4, 1, 0.4]
+
+                    }}
+
+                    transition={{
+
+                        repeat: Infinity,
+
+                        duration: 4
+
+                    }}
+
+                    className="
+                    absolute
+                    left-0
+                    top-0
+                    h-1
+                    w-full
+                    "
+
+                    style={{
+
+                        background:
+                            "linear-gradient(90deg, transparent, #F0C24B 15%, #8B6BD8 50%, #4FD1E3 85%, transparent)"
+
+                    }}
+
+                />
+
+                <div className="flex items-center justify-between">
+
+                    {/* LEFT */}
+
+                    <div className="flex items-center gap-5">
+
+                        <HeaderButton
+
+                            onClick={toggleSidebar}
+
+                        >
+
+                            <PanelLeft size={20} />
+
+                        </HeaderButton>
+
+                        <motion.div
+
+                            animate={{
+
+                                y: [0, -2, 0]
+
+                            }}
+
+                            transition={{
+
+                                repeat: Infinity,
+
+                                duration: 4
+
+                            }}
+
+                        >
+
+                            <MissionTitle />
+
+                        </motion.div>
+
+                    </div>
+
+                    {/* CENTER */}
+
+                    <motion.div
+
+                        layout
+
+                        className="hidden xl:flex items-center gap-4"
+
+                    >
+
+                        <HeaderInfoCard
+
+                            title="Active Drone"
+
+                            value={selectedDrone?.serialNumber ?? "--"}
+
+                        />
+
+                        <HeaderInfoCard
+
+                            title="Mission"
+
+                            value="Surveillance"
+
+                        />
+
+                        <HeaderInfoCard
+
+                            title="Status"
+
+                            value={selectedDrone?.status ?? "--"}
+
+                        />
+
+                    </motion.div>
+
+                    {/* RIGHT */}
+
+                    <div className="flex items-center gap-3">
+
+                        <StatusChip
+
+                            variant="live"
+
+                            pulse
+
+                            text="Telemetry"
+
+                            icon={<Radio size={14}/>}
+
+                        />
+
+                        <StatusChip
+
+                            variant="success"
+
+                            text="Secure"
+
+                            icon={<Shield size={14}/>}
+
+                        />
+
+                        <StatusChip
+
+                            variant="simulator"
+
+                            text="Simulator"
+
+                            icon={<Cpu size={14}/>}
+
+                        />
+
+                        <LiveClock/>
+
+                    </div>
+
+                </div>
+
+            </GlassPanel>
+
+        </motion.header>
 
     );
 

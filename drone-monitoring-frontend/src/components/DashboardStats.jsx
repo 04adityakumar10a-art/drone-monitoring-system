@@ -168,7 +168,7 @@ function DashboardStats({ stats }) {
 
                             </span>
 
-                            <span className="flex items-center gap-1 text-sm font-medium text-[#D4AF37]">
+                            <span className="flex items-center gap-1 text-sm font-medium text-[var(--aerion-primary)]">
 
                                 <TrendingUp size={15} />
 

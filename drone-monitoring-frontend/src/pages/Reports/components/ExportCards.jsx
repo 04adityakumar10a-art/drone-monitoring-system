@@ -71,7 +71,7 @@ function Card({ title, subtitle, icon, onClick }) {
 
                 </div>
 
-                <div className="rounded-2xl bg-[#171717] p-4 text-[#D4AF37]">
+                <div className="rounded-2xl bg-[#171717] p-4 text-[var(--aerion-primary)]">
 
                     {icon}
 

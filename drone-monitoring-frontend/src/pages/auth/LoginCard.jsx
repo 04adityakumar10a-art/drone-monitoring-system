@@ -13,7 +13,7 @@ function LoginCard() {
 
                     <div className="rounded-2xl bg-[#1A1A1A] p-4">
 
-                        <Plane className="text-[#D4AF37]" size={34} />
+                        <Plane className="text-[var(--aerion-primary)]rion-primary)]" size={34} />
 
                     </div>
 

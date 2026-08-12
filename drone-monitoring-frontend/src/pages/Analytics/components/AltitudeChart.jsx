@@ -19,7 +19,7 @@ function AltitudeChart({ drones }) {
 
     const data = drones.map(d => ({
         name: d.model,
-        altitude: d.altitude ?? 0
+        altitude: Number(d.altitude) || 0
     }));
 
     const highestAltitude = Math.max(
@@ -29,93 +29,181 @@ function AltitudeChart({ drones }) {
 
     return (
 
-        <AnalyticsChartCard
+        <div className="
+            relative
+            rounded-3xl
+            border border-white/10
+            bg-white/[0.04]
+            backdrop-blur-2xl
+            shadow-[0_8px_40px_rgba(0,0,0,0.35)]
+            overflow-hidden
+        ">
 
-            title="Altitude"
+            {/* Glass highlight */}
+            <div className="
+                pointer-events-none
+                absolute
+                inset-0
+                bg-gradient-to-br
+                from-white/[0.08]
+                via-transparent
+                to-transparent
+            " />
 
-            value={`${highestAltitude} m`}
+            {/* Subtle gold ambient glow */}
+            <div className="
+                pointer-events-none
+                absolute
+                -top-24
+                right-[-40px]
+                w-48
+                h-48
+                bg-[#D4AF37]/10
+                rounded-full
+                blur-3xl
+            " />
 
-            subtitle="Highest recorded altitude"
+            <div className="relative z-10">
 
-            icon={<Mountain size={26} />}
+                <AnalyticsChartCard
 
-            footer={
+                    title="Altitude"
 
-                <div className="flex items-center gap-2 text-sky-400">
+                    value={`${highestAltitude} m`}
 
-                    <ArrowUp size={16} />
+                    subtitle="Highest recorded altitude"
 
-                    <span className="text-sm">
+                    icon={
+                        <div className="
+                            flex
+                            items-center
+                            justify-center
+                            w-11
+                            h-11
+                            rounded-2xl
+                            bg-white/[0.06]
+                            border border-white/10
+                            backdrop-blur-xl
+                            shadow-inner
+                        ">
+                            <Mountain
+                                size={24}
+                                className="text-[#D4AF37]"
+                            />
+                        </div>
+                    }
 
-                        Flight altitude within operational limits.
+                    footer={
 
-                    </span>
+                        <div className="
+                            flex
+                            items-center
+                            gap-2
+                            px-3
+                            py-2
+                            rounded-xl
+                            bg-sky-400/[0.06]
+                            border border-sky-400/10
+                            backdrop-blur-md
+                        ">
 
-                </div>
-
-            }
-
-        >
-
-            <ResponsiveContainer
-                width="100%"
-                height={300}
-            >
-
-                <BarChart data={data}>
-
-                    <XAxis
-                        dataKey="name"
-                        tick={{
-                            fill: "#A3A3A3",
-                            fontSize: 12
-                        }}
-                        axisLine={false}
-                        tickLine={false}
-                    />
-
-                    <YAxis
-                        tick={{
-                            fill: "#A3A3A3",
-                            fontSize: 12
-                        }}
-                        axisLine={false}
-                        tickLine={false}
-                    />
-
-                    <Tooltip
-                        contentStyle={{
-                            background: "#181818",
-                            border: "1px solid #333",
-                            borderRadius: 12,
-                            color: "#fff"
-                        }}
-                    />
-
-                    <Bar
-                        dataKey="altitude"
-                        radius={[8, 8, 0, 0]}
-                    >
-
-                        {data.map((_, index) => (
-
-                            <Cell
-                                key={index}
-                                fill="#D4AF37"
+                            <ArrowUp
+                                size={16}
+                                className="text-sky-400"
                             />
 
-                        ))}
+                            <span className="
+                                text-sm
+                                text-sky-300
+                            ">
+                                Flight altitude within operational limits.
+                            </span>
 
-                    </Bar>
+                        </div>
 
-                </BarChart>
+                    }
 
-            </ResponsiveContainer>
+                >
 
-        </AnalyticsChartCard>
+                    <ResponsiveContainer
+                        width="100%"
+                        height={300}
+                    >
 
+                        <BarChart
+                            data={data}
+                            margin={{
+                                top: 10,
+                                right: 10,
+                                left: 0,
+                                bottom: 5
+                            }}
+                        >
+
+                            <XAxis
+                                dataKey="name"
+                                tick={{
+                                    fill: "#A3A3A3",
+                                    fontSize: 12
+                                }}
+                                axisLine={false}
+                                tickLine={false}
+                            />
+
+                            <YAxis
+                                tick={{
+                                    fill: "#A3A3A3",
+                                    fontSize: 12
+                                }}
+                                axisLine={false}
+                                tickLine={false}
+                            />
+
+                            <Tooltip
+                                cursor={{
+                                    fill: "rgba(255,255,255,0.03)"
+                                }}
+                                contentStyle={{
+                                    background: "rgba(15, 15, 15, 0.75)",
+                                    backdropFilter: "blur(16px)",
+                                    WebkitBackdropFilter: "blur(16px)",
+                                    border: "1px solid rgba(255,255,255,0.12)",
+                                    borderRadius: "16px",
+                                    color: "#fff",
+                                    boxShadow: "0 8px 30px rgba(0,0,0,0.35)"
+                                }}
+                                labelStyle={{
+                                    color: "#D4AF37",
+                                    fontWeight: 600
+                                }}
+                            />
+
+                            <Bar
+                                dataKey="altitude"
+                                radius={[10, 10, 3, 3]}
+                            >
+
+                                {data.map((_, index) => (
+
+                                    <Cell
+                                        key={index}
+                                        fill="#D4AF37"
+                                    />
+
+                                ))}
+
+                            </Bar>
+
+                        </BarChart>
+
+                    </ResponsiveContainer>
+
+                </AnalyticsChartCard>
+
+            </div>
+
+        </div>
     );
-
 }
 
 export default AltitudeChart;

@@ -43,7 +43,7 @@ function MissionHeader({
 
                 <div>
 
-                    <p className="text-xs uppercase tracking-[0.35em] text-[#D4AF37]">
+                    <p className="text-xs uppercase tracking-[0.35em] text-[var(--aerion-primary)]">
 
                         AERION
 
@@ -225,7 +225,7 @@ function StatusCard({
 
         <div className="flex items-center gap-3 rounded-xl border border-[#262626] bg-[#0D0D0D] px-4 py-3">
 
-            <div className="text-[#D4AF37]">
+            <div className="text-[var(--aerion-primary)]">
 
                 {icon}
 

@@ -1,1 +1,194 @@
+:root {
+    --aerion-bg: #090B0D;
+    --aerion-surface: #111315;
+    --aerion-elevated: #17191B;
+    --aerion-border: #292B2D;
+    --aerion-primary: #D4AF37;
+    --aerion-text: #FFFFFF;
+    --aerion-muted: #6B7280;
+
+    --aerion-density: 1;
+}
+
+
+/* =========================================
+   AERION DARK
+========================================= */
+
+:root[data-theme="aerion-dark"] {
+
+    --aerion-bg: #090B0D;
+    --aerion-surface: #111315;
+    --aerion-elevated: #17191B;
+
+    --aerion-border: #292B2D;
+
+    --aerion-primary: #D4AF37;
+
+    --aerion-text: #FFFFFF;
+    --aerion-muted: #6B7280;
+}
+
+
+/* =========================================
+   MIDNIGHT
+========================================= */
+
+:root[data-theme="midnight"] {
+
+    --aerion-bg: #070B12;
+    --aerion-surface: #0D1420;
+    --aerion-elevated: #121B29;
+
+    --aerion-border: #243244;
+
+    --aerion-primary: #38BDF8;
+
+    --aerion-text: #F8FAFC;
+    --aerion-muted: #64748B;
+}
+
+
+/* =========================================
+   HIGH CONTRAST
+========================================= */
+
+:root[data-theme="high-contrast"] {
+
+    --aerion-bg: #050505;
+    --aerion-surface: #0C0C0C;
+    --aerion-elevated: #151515;
+
+    --aerion-border: #4A4A4A;
+
+    --aerion-primary: #F5C542;
+
+    --aerion-text: #FFFFFF;
+    --aerion-muted: #A3A3A3;
+}
+
+
+/* =========================================
+   COMPACT MODE
+========================================= */
+
+:root[data-compact="true"] {
+
+    --aerion-density: 0.82;
+
+}
+
+
+/* =========================================
+   NORMAL MODE
+========================================= */
+
+:root[data-compact="false"] {
+
+    --aerion-density: 1;
+
+}
+
+
+/* =========================================
+   GLOBAL THEME TRANSITION
+========================================= */
+
+html {
+
+    background: var(--aerion-bg);
+
+    transition:
+        background-color 350ms ease,
+        color 350ms ease;
+
+}
+
+
+body {
+
+    background: var(--aerion-bg);
+
+    color: var(--aerion-text);
+
+    transition:
+        background-color 350ms ease,
+        color 350ms ease;
+
+}
+
+/* =====================================================
+   AERION DENSITY
+===================================================== */
+
+.aerion-density {
+
+    --aerion-spacing-scale:
+        var(--aerion-density);
+
+}
+
+/* =====================================================
+   THEME TRANSITION OVERLAY
+===================================================== */
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    background:
+        radial-gradient(circle at center,
+            var(--aerion-primary-soft),
+            transparent 55%);
+
+    opacity: 0;
+
+    transition:
+        opacity 350ms ease;
+
+}
+
+
+/* Briefly enhance transitions when theme changes */
+
+html[data-theme="midnight"] body::after {
+
+    animation:
+        aerionThemePulse 500ms ease;
+
+}
+
+
+html[data-theme="high-contrast"] body::after {
+
+    animation:
+        aerionThemePulse 500ms ease;
+
+}
+
+
+@keyframes aerionThemePulse {
+
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 0.18;
+    }
+
+    100% {
+        opacity: 0;
+    }
+
+}
+
 @import "tailwindcss";

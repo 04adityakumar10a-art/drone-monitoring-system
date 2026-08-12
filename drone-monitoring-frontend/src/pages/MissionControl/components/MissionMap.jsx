@@ -94,6 +94,8 @@ function MissionMap({
 
                             drone={drone}
 
+                            selected={selectedDrone?.id === drone.id}
+
                         />
 
                     ))

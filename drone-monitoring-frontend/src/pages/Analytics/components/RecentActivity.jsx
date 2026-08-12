@@ -27,7 +27,7 @@ function RecentActivity({ drones }) {
                 <div className="flex items-center gap-3">
 
                     <Clock3
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                     <div>

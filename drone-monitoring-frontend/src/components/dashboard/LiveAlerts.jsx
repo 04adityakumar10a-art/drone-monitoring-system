@@ -33,7 +33,7 @@ function LiveAlerts() {
             title: "Mission Started",
             description: "Drone-02 entered autonomous mission.",
             icon: PlaneTakeoff,
-            color: "text-[#D4AF37]"
+            color: "text-[var(--aerion-primary)]"
         },
 
         {
@@ -78,11 +78,11 @@ function LiveAlerts() {
 
                 </div>
 
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#D4AF37]/20 bg-[#D4AF37]/10">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#D4AF37]/20 bg-[var(--aerion-primary-soft)]">
 
                     <Activity
                         size={28}
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                 </div>

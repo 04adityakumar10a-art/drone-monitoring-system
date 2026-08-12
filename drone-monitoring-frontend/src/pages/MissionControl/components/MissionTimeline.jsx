@@ -144,7 +144,7 @@ function MissionTimeline() {
 
                                 <div className="flex-1">
 
-                                    <div className="text-sm text-[#D4AF37]">
+                                    <div className="text-sm text-[var(--aerion-primary)]">
 
                                         {event.time}
 

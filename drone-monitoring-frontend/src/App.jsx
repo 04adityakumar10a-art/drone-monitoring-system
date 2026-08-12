@@ -7,6 +7,9 @@ import {
     disconnectWebSocket
 } from "./services/websocket";
 
+import ThemeProvider from "./context/ThemeContext";
+
+
 function App() {
 
     useEffect(() => {
@@ -21,8 +24,18 @@ function App() {
 
     }, []);
 
-    return <AppRoutes />;
+
+    return (
+
+        <ThemeProvider>
+
+            <AppRoutes />
+
+        </ThemeProvider>
+
+    );
 
 }
+
 
 export default App;

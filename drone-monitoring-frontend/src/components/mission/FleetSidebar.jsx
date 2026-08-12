@@ -187,7 +187,7 @@ function FleetSidebar({
 
                                         size={16}
 
-                                        className="text-[#D4AF37]"
+                                        className="text-[var(--aerion-primary)]"
 
                                     />
 
@@ -249,7 +249,7 @@ function FleetSidebar({
 
                                     </div>
 
-                                    <span className="text-[#D4AF37]">
+                                    <span className="text-[var(--aerion-primary)]">
 
                                         ID {drone.id}
 

@@ -8,6 +8,9 @@ function getStatusColor(status) {
         case "FLYING":
             return "#22C55E";
 
+        case "ACTIVE":
+            return "#22C55E";
+
         case "IDLE":
             return "#3B82F6";
 
@@ -18,7 +21,8 @@ function getStatusColor(status) {
             return "#EF4444";
 
         default:
-            return "#D4AF37";
+            return "#22D3EE";
+
     }
 
 }
@@ -27,72 +31,200 @@ function createDroneIcon(drone, selected) {
 
     const color = getStatusColor(drone.status);
 
+    const glow = selected ? 40 : 24;
+
+    const ring = selected ? 42 : 34;
+
     return L.divIcon({
 
         className: "",
 
+        iconSize: [72, 72],
+
+        iconAnchor: [36, 36],
+
+        popupAnchor: [0, -30],
+
         html: `
-        <div
-            style="
-                position:relative;
-                width:30px;
-                height:30px;
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                transform:rotate(${drone.heading || 0}deg);
-                transition:transform .25s ease;
-            "
-        >
 
-            <div
-                style="
-                    position:absolute;
-                    width:${selected ? 30 : 22}px;
-                    height:${selected ? 30 : 22}px;
-                    border-radius:50%;
-                    border:2px solid ${color};
-                    background:#101010;
-                    box-shadow:
-                        0 0 8px ${color},
-                        0 0 18px ${color};
-                "
-            ></div>
+<div
+style="
+position:relative;
+width:72px;
+height:72px;
+display:flex;
+justify-content:center;
+align-items:center;
+pointer-events:none;
+">
 
-            <div
-                style="
-                    position:absolute;
-                    width:10px;
-                    height:10px;
-                    border-radius:50%;
-                    background:white;
-                    border:3px solid ${color};
-                "
-            ></div>
+    ${selected
+                ?
 
-            <div
-                style="
-                    position:absolute;
-                    top:-8px;
-                    width:0;
-                    height:0;
-                    border-left:5px solid transparent;
-                    border-right:5px solid transparent;
-                    border-bottom:10px solid ${color};
-                "
-            ></div>
+                `
+<div
+style="
+position:absolute;
+width:58px;
+height:58px;
+border-radius:50%;
+border:2px solid ${color};
+animation:aerionPulse 2s infinite;
+">
+</div>
+`
+                :
+                ""
+            }
 
-        </div>
-        `,
+<div
+style="
+position:absolute;
+width:${ring}px;
+height:${ring}px;
+border-radius:50%;
+background:#090909;
+border:2px solid ${color};
+box-shadow:
+0 0 12px ${color},
+0 0 ${glow}px ${color};
+">
+</div>
 
-        iconSize: [30, 30],
+<div
+style="
+position:absolute;
+transform:rotate(${drone.heading || 0}deg);
+transition:transform .45s cubic-bezier(.22,.61,.36,1);
+">
 
-        iconAnchor: [15, 15]
+<svg
+width="34"
+height="34"
+viewBox="0 0 64 64"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+
+<path
+
+d="M32 3
+L38 22
+L56 30
+L38 36
+L32 61
+L26 36
+L8 30
+L26 22Z"
+
+fill="${color}"
+
+stroke="white"
+
+stroke-width="2"
+
+stroke-linejoin="round"
+
+/>
+
+<circle
+
+cx="32"
+
+cy="30"
+
+r="5"
+
+fill="#ffffff"
+
+/>
+
+</svg>
+
+</div>
+
+<div
+
+style="
+position:absolute;
+top:-6px;
+left:50%;
+transform:translateX(-50%);
+padding:2px 7px;
+border-radius:999px;
+background:rgba(8,8,8,.95);
+border:1px solid ${color};
+font-size:10px;
+font-weight:700;
+letter-spacing:.12em;
+color:white;
+white-space:nowrap;
+"
+
+>
+
+${drone.serialNumber ?? drone.id}
+
+</div>
+
+<div
+
+style="
+position:absolute;
+bottom:-8px;
+left:50%;
+transform:translateX(-50%);
+padding:2px 6px;
+border-radius:999px;
+background:${color}20;
+border:1px solid ${color};
+font-size:10px;
+font-weight:600;
+color:${color};
+"
+
+>
+
+${Math.round(drone.altitude ?? 0)} m
+
+</div>
+
+<style>
+
+@keyframes aerionPulse{
+
+0%{
+
+transform:scale(.9);
+opacity:1;
+
+}
+
+70%{
+
+transform:scale(1.45);
+opacity:0;
+
+}
+
+100%{
+
+transform:scale(1.45);
+opacity:0;
+
+}
+
+}
+
+</style>
+
+</div>
+
+`
 
     });
 
 }
-
 function DroneMarker({
 
     drone,
@@ -103,13 +235,39 @@ function DroneMarker({
 
 }) {
 
+    const statusColor = getStatusColor(drone.status);
+
+    const batteryColor =
+
+        drone.battery > 70
+
+            ? "#22C55E"
+
+            : drone.battery > 35
+
+            ? "#F59E0B"
+
+            : "#EF4444";
+
     return (
 
         <Marker
 
-            position={[drone.lat, drone.lng]}
+            position={[
 
-            icon={createDroneIcon(drone, selected)}
+                drone.lat,
+
+                drone.lng
+
+            ]}
+
+            icon={createDroneIcon(
+
+                drone,
+
+                selected
+
+            )}
 
             eventHandlers={{
 
@@ -119,42 +277,223 @@ function DroneMarker({
 
         >
 
-            <Popup>
+            <Popup
 
-                <div className="min-w-[210px] space-y-3">
+                closeButton={false}
 
-                    <div>
+                minWidth={260}
 
-                        <div className="font-bold text-base">
+            >
 
-                            {drone.name}
+                <div
 
-                        </div>
+                    className="
+                    min-w-[260px]
+                    overflow-hidden
+                    rounded-2xl
+                    bg-[#090909]
+                    text-white
+                    "
 
-                        <div className="text-xs text-gray-500">
+                >
 
-                            {drone.serialNumber}
+                    {/* ===========================
+                            HEADER
+                    ============================ */}
+
+                    <div
+
+                        className="
+                        border-b
+                        border-white/10
+                        px-5
+                        py-4
+                        "
+
+                    >
+
+                        <div className="flex items-center justify-between">
+
+                            <div>
+
+                                <h3 className="text-lg font-bold">
+
+                                    {
+
+                                        drone.name ||
+
+                                        "Drone"
+
+                                    }
+
+                                </h3>
+
+                                <p className="text-xs text-gray-500">
+
+                                    {
+
+                                        drone.serialNumber
+
+                                    }
+
+                                </p>
+
+                            </div>
+
+                            <div
+
+                                className="
+                                rounded-full
+                                px-3
+                                py-1
+                                text-xs
+                                font-semibold
+                                "
+
+                                style={{
+
+                                    background:
+
+                                    `${statusColor}20`,
+
+                                    color:
+
+                                    statusColor,
+
+                                    border:
+
+                                    `1px solid ${statusColor}`
+
+                                }}
+
+                            >
+
+                                {drone.status}
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                    <div className="grid grid-cols-2 gap-y-2 text-sm">
+                    {/* ===========================
+                            BATTERY
+                    ============================ */}
 
-                        <span>Battery</span>
-                        <span>{drone.battery}%</span>
+                    <div className="px-5 pt-4">
 
-                        <span>Altitude</span>
-                        <span>{drone.altitude} m</span>
+                        <div className="mb-2 flex justify-between">
 
-                        <span>Speed</span>
-                        <span>{drone.speed} m/s</span>
+                            <span className="text-sm text-gray-400">
 
-                        <span>Heading</span>
-                        <span>{Math.round(drone.heading)}°</span>
+                                Battery
 
-                        <span>Status</span>
-                        <span>{drone.status}</span>
+                            </span>
+
+                            <span
+
+                                style={{
+
+                                    color:
+
+                                    batteryColor
+
+                                }}
+
+                                className="font-semibold"
+
+                            >
+
+                                {drone.battery}%
+
+                            </span>
+
+                        </div>
+
+                        <div className="h-2 overflow-hidden rounded-full bg-[#202020]">
+
+                            <div
+
+                                className="h-full rounded-full"
+
+                                style={{
+
+                                    width:
+
+                                    `${drone.battery}%`,
+
+                                    background:
+
+                                    batteryColor
+
+                                }}
+
+                            />
+
+                        </div>
+
+                    </div>
+
+                    {/* ===========================
+                            TELEMETRY
+                    ============================ */}
+
+                    <div
+
+                        className="
+                        grid
+                        grid-cols-2
+                        gap-4
+                        px-5
+                        py-5
+                        text-sm
+                        "
+
+                    >
+
+                        <Info
+
+                            title="Altitude"
+
+                            value={`${Math.round(
+
+                                drone.altitude
+
+                            )} m`}
+
+                        />
+
+                        <Info
+
+                            title="Speed"
+
+                            value={`${drone.speed.toFixed(
+
+                                1
+
+                            )} m/s`}
+
+                        />
+
+                        <Info
+
+                            title="Heading"
+
+                            value={`${Math.round(
+
+                                drone.heading
+
+                            )}°`}
+
+                        />
+
+                        <Info
+
+                            title="Signal"
+
+                            value={`${drone.signal}%`}
+
+                        />
 
                     </div>
 
@@ -163,6 +502,36 @@ function DroneMarker({
             </Popup>
 
         </Marker>
+
+    );
+
+}
+
+function Info({
+
+    title,
+
+    value
+
+}){
+
+    return(
+
+        <div>
+
+            <div className="text-xs uppercase tracking-[0.18em] text-gray-500">
+
+                {title}
+
+            </div>
+
+            <div className="mt-1 font-semibold">
+
+                {value}
+
+            </div>
+
+        </div>
 
     );
 

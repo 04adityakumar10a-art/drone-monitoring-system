@@ -21,7 +21,7 @@ function TemplateCard({
 
                 <div className="flex items-center gap-4">
 
-                    <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#171717] p-4 text-[#D4AF37]">
+                    <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#171717] p-4 text-[var(--aerion-primary)]">
 
                         {icon}
 

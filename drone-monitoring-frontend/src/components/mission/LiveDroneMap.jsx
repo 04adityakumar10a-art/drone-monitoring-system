@@ -312,7 +312,7 @@ function LiveDroneMap({
             <div className="grid grid-cols-2 border-t border-[#262626] bg-[#0D0D0D] md:grid-cols-5">
 
                 <StatusItem
-                    icon={<MapPinned size={18} className="text-[#D4AF37]" />}
+                    icon={<MapPinned size={18} className="text-[var(--aerion-primary)]" />}
                     title="Latitude"
                     value={
                         selectedTelemetry?.latitude?.toFixed(6) ?? "--"
@@ -320,7 +320,7 @@ function LiveDroneMap({
                 />
 
                 <StatusItem
-                    icon={<MapPinned size={18} className="text-[#D4AF37]" />}
+                    icon={<MapPinned size={18} className="text-[var(--aerion-primary)]" />}
                     title="Longitude"
                     value={
                         selectedTelemetry?.longitude?.toFixed(6) ?? "--"
@@ -348,7 +348,7 @@ function LiveDroneMap({
                 />
 
                 <StatusItem
-                    icon={<BatteryCharging size={18} className="text-[#D4AF37]" />}
+                    icon={<BatteryCharging size={18} className="text-[var(--aerion-primary)]" />}
                     title="Battery"
                     value={
                         selectedTelemetry

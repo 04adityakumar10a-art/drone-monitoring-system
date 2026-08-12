@@ -90,7 +90,7 @@ function TelemetryHistory({
 
                     onClick={exportCsv}
 
-                    className="flex items-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-2 font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+                    className="flex items-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-2 font-semibold text-[var(--aerion-primary)] transition hover:bg-[#D4AF37] hover:text-black"
 
                 >
 
@@ -164,7 +164,7 @@ function TelemetryHistory({
 
                                                     size={18}
 
-                                                    className="text-[#D4AF37]"
+                                                    className="text-[var(--aerion-primary)]"
 
                                                 />
 
@@ -330,7 +330,7 @@ function Metric({
 
         <div className="rounded-lg border border-[#262626] bg-[#151515] p-4">
 
-            <div className="mb-2 flex items-center gap-2 text-[#D4AF37]">
+            <div className="mb-2 flex items-center gap-2 text-[var(--aerion-primary)]">
 
                 {icon}
 

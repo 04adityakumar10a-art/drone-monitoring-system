@@ -216,7 +216,7 @@ function LiveCharts({ telemetry }) {
 
                     }
 
-                    color="text-[#D4AF37]"
+                    color="text-[var(--aerion-primary)]"
 
                 />
 
@@ -492,7 +492,7 @@ function LiveCharts({ telemetry }) {
 
                     </span>
 
-                    <span className="font-semibold text-[#D4AF37]">
+                    <span className="font-semibold text-[var(--aerion-primary)]">
 
                         {
 
@@ -618,7 +618,7 @@ function ChartCard({
 
         <div className="rounded-xl border border-[#262626] bg-[#0D0D0D] p-4">
 
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--aerion-primary)]">
 
                 {title}
 

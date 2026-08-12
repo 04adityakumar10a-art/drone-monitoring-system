@@ -69,7 +69,7 @@ function AircraftPanel({ telemetry, drone }) {
 
                     <div>
 
-                        <p className="text-xs uppercase tracking-[0.3em] text-[#D4AF37]">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--aerion-primary)]">
 
                             Aircraft
 
@@ -199,7 +199,7 @@ function AircraftPanel({ telemetry, drone }) {
 
                         size={18}
 
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
 
                     />
 
@@ -275,7 +275,7 @@ function Metric({
 
         <div className="rounded-xl border border-[#262626] bg-[#0D0D0D] p-4">
 
-            <div className="mb-3 flex items-center gap-2 text-[#D4AF37]">
+            <div className="mb-3 flex items-center gap-2 text-[var(--aerion-primary)]">
 
                 {icon}
 

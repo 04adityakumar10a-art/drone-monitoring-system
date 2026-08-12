@@ -192,7 +192,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                         className={`flex w-full items-center justify-between rounded-xl border p-4 transition ${
                             !fleetMode
-                                ? "border-[#D4AF37] bg-[#181818]"
+                                ? "border-[#D4AF37] bg-[var(--aerion-elevated)]"
                                 : "border-[#262626] bg-[#0D0D0D]"
                         }`}
 
@@ -202,7 +202,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                             <Plane
                                 size={18}
-                                className="text-[#D4AF37]"
+                                className="text-[var(--aerion-primary)]"
                             />
 
                             <span className="text-white">
@@ -219,7 +219,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                             <ShieldCheck
                                 size={18}
-                                className="text-[#D4AF37]"
+                                className="text-[var(--aerion-primary)]"
                             />
 
                         }
@@ -232,7 +232,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                         className={`flex w-full items-center justify-between rounded-xl border p-4 transition ${
                             fleetMode
-                                ? "border-[#D4AF37] bg-[#181818]"
+                                ? "border-[#D4AF37] bg-[var(--aerion-elevated)]"
                                 : "border-[#262626] bg-[#0D0D0D]"
                         }`}
 
@@ -242,7 +242,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                             <Radio
                                 size={18}
-                                className="text-[#D4AF37]"
+                                className="text-[var(--aerion-primary)]"
                             />
 
                             <span className="text-white">
@@ -259,7 +259,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                             <ShieldCheck
                                 size={18}
-                                className="text-[#D4AF37]"
+                                className="text-[var(--aerion-primary)]"
                             />
 
                         }
@@ -280,7 +280,7 @@ function SimulatorControls({ selectedDroneId }) {
 
                         <Cpu
                             size={18}
-                            className="text-[#D4AF37]"
+                            className="text-[var(--aerion-primary)]"
                         />
 
                         <span className="text-gray-400">

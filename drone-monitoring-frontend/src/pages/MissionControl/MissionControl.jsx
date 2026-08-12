@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { PanelLeft } from "lucide-react";
-import { useSidebar } from "../../context/SidebarContext";
+import { AnimatePresence, motion } from "motion/react";
+
 import api from "../../api/axios";
 
 import useTelemetry from "../../hooks/useTelemetry";
@@ -9,10 +9,12 @@ import useReplay from "../../hooks/useReplay";
 import MissionControlLayout from "../../layouts/MissionControlLayout";
 
 import MissionToolbar from "./components/MissionToolbar";
-import FleetHeader from "./components/FleetHeader";
 import FleetStrip from "./components/FleetStrip";
 import MissionMap from "./components/MissionMap";
-import TelemetrySidebar from "./components/TelemetrySidebar";
+
+import TelemetryPanel from "./components/TelemetryPanel";
+import MissionPanel from "./components/MissionPanel";
+
 import ReplayTimeline from "./components/ReplayTimeline";
 import ReplayButton from "./components/ReplayButton";
 import MissionStatsOverlay from "./components/MissionStatsOverlay";
@@ -35,7 +37,6 @@ function MissionControl() {
 
     const [showReplay, setShowReplay] = useState(false);
 
-    const { toggleSidebar } = useSidebar();
 
     /*
     =====================================
@@ -358,16 +359,20 @@ function MissionControl() {
     }, [history]);
 
     /*
-    =====================================
-            LAYOUT
-    =====================================
-    */
+=====================================
+        LAYOUT
+=====================================
+*/
 
     return (
 
         <MissionControlLayout>
 
-            <div className="flex h-screen flex-col bg-[#090909]">
+            <div className="flex h-screen flex-col overflow-hidden bg-[#080808]">
+
+                {/* ===========================================
+                        TOP TOOLBAR
+            ============================================ */}
 
                 <MissionToolbar
 
@@ -375,41 +380,121 @@ function MissionControl() {
 
                 />
 
-                <FleetHeader
+                {/* ===========================================
+                        FLEET STRIP
+            ============================================ */}
 
-                    drones={liveDrones}
+                <AnimatePresence initial={false}>
 
-                    selectedDrone={displayDrone}
+                    {
 
-                    collapsed={fleetCollapsed}
+                        !fleetCollapsed && (
 
-                    onToggle={() =>
-                        setFleetCollapsed(!fleetCollapsed)
+                            <motion.div
+
+                                initial={{
+
+                                    height: 0,
+
+                                    opacity: 0
+
+                                }}
+
+                                animate={{
+
+                                    height: "auto",
+
+                                    opacity: 1
+
+                                }}
+
+                                exit={{
+
+                                    height: 0,
+
+                                    opacity: 0
+
+                                }}
+
+                                transition={{
+
+                                    duration: .35
+
+                                }}
+
+                                className="overflow-x-hidden overflow-y-visible"
+
+                            >
+
+                                <FleetStrip
+
+                                    drones={liveDrones}
+
+                                    selectedDrone={selectedDrone}
+
+                                    onSelectDrone={setSelectedDrone}
+
+                                />
+
+                            </motion.div>
+
+                        )
+
                     }
 
-                />
+                </AnimatePresence>
 
-                {!fleetCollapsed && (
+                {/* ===========================================
+                        MAIN GRID
+            ============================================ */}
 
-                    <FleetStrip
+                <div
 
-                        drones={liveDrones}
+                    className="
+grid
+flex-1
+min-h-0
 
-                        selectedDrone={selectedDrone}
+overflow-hidden
+grid-cols-[330px_minmax(0,1fr)_380px]
+"
 
-                        onSelectDrone={setSelectedDrone}
+                >
 
-                    />
+                    {/* ===========================================
+                        LEFT TELEMETRY
+                ============================================ */}
 
-                )}
+                    <aside
+                        className="
+    overflow-hidden
+    border-r
+    border-white/5
+    bg-[#0B0B0B]
+    w-[330px]
+    "
+                    >
 
-                <div className="relative flex flex-1 min-h-0 overflow-hidden">
+                        <TelemetryPanel
 
-                    {/* ===========================
+                            drone={displayDrone}
+
+                        />
+
+                    </aside>
+
+                    {/* ===========================================
                             MAP
-                    ============================ */}
+                ============================================ */}
 
-                    <div className="relative flex-1 min-h-0">
+                    <main
+
+                        className="
+                    relative
+                    overflow-hidden
+                    "
+
+                    >
 
                         <MissionMap
 
@@ -437,15 +522,23 @@ function MissionControl() {
 
                         />
 
-                    </div>
+                    </main>
 
-                    {/* ===========================
-                        TELEMETRY SIDEBAR
-                    ============================ */}
+                    {/* ===========================================
+                        RIGHT PANEL
+                ============================================ */}
 
-                    <div className="w-[380px] border-l border-[#232323] bg-[#0c0c0c]">
+                    <aside
+                        className="
+    overflow-hidden
+    border-l
+    border-white/5
+    bg-[#0B0B0B]
+    w-[380px]
+    "
+                    >
 
-                        <TelemetrySidebar
+                        <MissionPanel
 
                             drone={displayDrone}
 
@@ -453,10 +546,9 @@ function MissionControl() {
 
                         />
 
-                    </div>
+                    </aside>
 
                 </div>
-
                 {/* ===========================
                         REPLAY TIMELINE
                 ============================ */}

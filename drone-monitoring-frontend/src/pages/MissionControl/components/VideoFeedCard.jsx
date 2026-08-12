@@ -24,7 +24,7 @@ function VideoFeedCard({
 
                         size={48}
 
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
 
                     />
 

@@ -1,34 +1,82 @@
 import { Polyline } from "react-leaflet";
 
-function DronePathLayer({ drone }) {
+function DronePathLayer({
 
-    if (!drone?.path || drone.path.length < 2) {
+    drone,
+
+    selected = false
+
+}) {
+
+    if (
+
+        !drone?.path ||
+
+        drone.path.length < 2
+
+    ) {
 
         return null;
 
     }
 
+    const color =
+
+        selected
+
+            ? "#22323b"
+
+            : "#6B7280";
+
     return (
 
-        <Polyline
+        <>
 
-            positions={drone.path}
+            {/* Glow */}
 
-            pathOptions={{
+            <Polyline
 
-                color: "#D4AF37",
+                positions={drone.path}
 
-                weight: 4,
+                pathOptions={{
 
-                opacity: 0.85,
+                    color,
 
-                lineCap: "round",
+                    weight: 10,
 
-                lineJoin: "round"
+                    opacity: 0.18,
 
-            }}
+                    lineCap: "round",
 
-        />
+                    lineJoin: "round"
+
+                }}
+
+            />
+
+            {/* Main Path */}
+
+            <Polyline
+
+                positions={drone.path}
+
+                pathOptions={{
+
+                    color,
+
+                    weight: selected ? 5 : 3,
+
+                    opacity: selected ? 1 : 0.6,
+
+                    lineCap: "round",
+
+                    lineJoin: "round"
+
+                }}
+
+            />
+
+        </>
 
     );
 

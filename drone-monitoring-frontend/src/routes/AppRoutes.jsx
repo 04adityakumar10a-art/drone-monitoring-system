@@ -3,10 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 
-import Dashboard from "../pages/Dashboard";
+import Dashboard from "../pages/Dashboard/Dashboard";
 import DroneList from "../pages/DroneList";
 import DroneDetails from "../pages/DroneDetails";
 import Users from "../pages/Users";
+import Settings from "../pages/Settings/Settings";
 
 import MissionControl from "../pages/MissionControl/MissionControl";
 import Analytics from "../pages/Analytics/Analytics";
@@ -92,6 +93,11 @@ function AppRoutes() {
                     <Route
                         path="/users"
                         element={<Users />}
+                    />
+
+                    <Route
+                        path="/settings"
+                        element={<Settings />}
                     />
 
                 </Route>

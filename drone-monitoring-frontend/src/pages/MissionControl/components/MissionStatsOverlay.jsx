@@ -60,7 +60,7 @@ function MissionStatsOverlay({ stats }) {
                            backdrop-blur-md
                            px-3 py-2
                            text-cyan-400
-                           hover:bg-[#181818]
+                           hover:bg-[var(--aerion-elevated)]
                            transition"
 
             >

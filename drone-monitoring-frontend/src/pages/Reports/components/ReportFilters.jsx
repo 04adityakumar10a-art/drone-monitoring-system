@@ -211,7 +211,7 @@ function ReportFilters({ fleet }) {
                             )
                         }
 
-                        className="mt-5 w-full rounded-2xl border border-[#2d2d2d] bg-[#181818] p-4 text-white"
+                        className="mt-5 w-full rounded-2xl border border-[#2d2d2d] bg-[var(--aerion-elevated)] p-4 text-white"
 
                     >
 
@@ -258,7 +258,7 @@ function ReportFilters({ fleet }) {
                 >
 
                     <FileSpreadsheet
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                     CSV
@@ -274,7 +274,7 @@ function ReportFilters({ fleet }) {
                 >
 
                     <FileDown
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                     Excel
@@ -290,7 +290,7 @@ function ReportFilters({ fleet }) {
                 >
 
                     <FileText
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                     PDF

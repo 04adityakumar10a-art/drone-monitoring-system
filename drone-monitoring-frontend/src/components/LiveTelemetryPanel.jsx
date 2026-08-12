@@ -28,7 +28,7 @@ function LiveTelemetryPanel({ telemetry }) {
 
                     <Activity
                         size={48}
-                        className="text-[#D4AF37]"
+                        className="text-[var(--aerion-primary)]"
                     />
 
                     <p className="mt-6 text-gray-500">
@@ -58,7 +58,7 @@ function LiveTelemetryPanel({ telemetry }) {
             title: "Altitude",
             value: `${telemetry?.altitude?.toFixed(1) ?? "--"} m`,
             icon: Plane,
-            color: "text-[#D4AF37]"
+            color: "text-[var(--aerion-primary)]"
         },
 
         {
@@ -219,7 +219,7 @@ function LiveTelemetryPanel({ telemetry }) {
 
                 </div>
 
-                <span className="text-[#D4AF37] font-medium">
+                <span className="text-[var(--aerion-primary)] font-medium">
 
                     Real Time
 
